@@ -1,1 +1,1 @@
-# hs_project
+# CS Screen Usage AI Project
