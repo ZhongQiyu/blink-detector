@@ -199,6 +199,7 @@ for key in self.patterns:
 
 
 
+
 # 12/2:
 
 # Task 0. Eye-Tracking and Tiredness Detection
@@ -208,71 +209,14 @@ for key in self.patterns:
 #   - https://learnopencv.com/getting-started-with-opencv/. Leave comments for the parts where you do not understand.
 #   - Compare the ideas of the basic 'processing' routines we have covered so far. Are they similar? If not, what makes you get around so?
 
-
-
 # - MediaPipe
 #   - Take a picture of your own. Change the format as if you need to.
 #   - Use cv2.imread, face_detection and drawing_utils in mediapipe.solutions to detect your face.
 #   - Interpret the results. How is the image processed? What does each parameter in the detection method do? How good a result would be?
 #   - *Can we have a better result by changing our parameters?
 
-import cv2
-import mediapipe as mp
-
-# 初始化 MediaPipe 解决方案
-mp_drawing = mp.solutions.drawing_utils
-mp_face_mesh = mp.solutions.face_mesh
-
-# 创建一个视频捕捉对象
-cap = cv2.VideoCapture(0)
-
-# 使用 Face Mesh
-with mp_face_mesh.FaceMesh(
-    max_num_faces=1,
-    refine_landmarks=True,
-    min_detection_confidence=0.5,
-    min_tracking_confidence=0.5) as face_mesh:
-
-    while cap.isOpened():
-        success, image = cap.read()
-        if not success:
-            continue
-
-        # 转换图像颜色空间
-        image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
-        results = face_mesh.process(image)
-
-        # 转换回 BGR 用于显示
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-
-        if results.multi_face_landmarks:
-            for face_landmarks in results.multi_face_landmarks:
-                # 绘制面部网格
-                mp_drawing.draw_landmarks(
-                    image=image,
-                    landmark_list=face_landmarks,
-                    connections=mp_face_mesh.FACEMESH_CONTOURS,
-                    landmark_drawing_spec=None,
-                    connection_drawing_spec=mp_drawing.styles
-                    .get_default_face_mesh_contours_style())
-
-                # 获取左眼和右眼的关键点
-                left_eye = [face_landmarks.landmark[i] for i in range(362, 382)]
-                right_eye = [face_landmarks.landmark[i] for i in range(133, 153)]
-
-                # 可以进一步处理这些关键点来追踪眼动
-
-        # 显示图像
-        cv2.imshow('MediaPipe Eye Tracking', image)
-        if cv2.waitKey(5) & 0xFF == 27:
-            break
-
-cap.release()
-cv2.destroyAllWindows()
 
 
-
-### CODING IN PROGRESS ###
 
 # Task 1. User Interaction:
 
@@ -323,40 +267,13 @@ def cube(x,y,w):
 #   - Click on a button that prompts the basic information; parse the information into a list; display the list.
 #   - Change the color of the window. The choice of colors can be either user-input or built-in. If user-input, include another button that behaves similarly as the first one does.
 #   - Make a timer that records the time since the user runs the program. Before the user shut the program down, display the total amount of time that the program runs in a pop-up window.
-
-# - detect the average frequency for pressing each key
-#   - e.g. since the timing session starts, the frequencies are recorded, and the average is taken by frequency/total_time_passed
-#   - when the average frequency is larger than a certain self-defined threshold, report the anomaly
-#   - when it is the opposite case, report the stability
-
-# - create listeners for both the mouse and the keyboard, and embed the functions into a Python class.
-#   - when we invoke the class, would we involve any issue? Why?
-#   - print the information of the process for both listeners. give a try.
-
-"""
-from pynput import keyboard
-# create the diccionary to store the key count
-
-def on_press(key):
-    try:
-        key_str = key.char
-    except AttributeError: # like a pcall function in Lua, runs top if no error, runs bottom if top errors. 
-        key_str = str(key)
-
-    if key_str in key_counts: 
-        key_counts[key_str] += 1 
-    else:
-        key_counts[key_str] = 1
-
-    print(f"Key pressed: {key_str}, Count: {key_counts[key_str]}")
-
-def on_release(key):
-    if key == keyboard.Key.esc:
-        return False
-
-# with keyboard.Listener(on_press=on_press, on_release=on_release) as listener:
-    # listener.join()
-"""
+#   - detect the average frequency for pressing each key
+#       - e.g. since the timing session starts, the frequencies are recorded, and the average is taken by frequency/total_time_passed
+#       - when the average frequency is larger than a certain self-defined threshold, report the anomaly
+#       - when it is the opposite case, report the stability
+#   - create listeners for both the mouse and the keyboard, and embed the functions into a Python class.
+#       - when we invoke the class, would we involve any issue? Why?
+#       - print the information of the process for both listeners. give a try.
 
 """
 import time
@@ -399,6 +316,37 @@ def calculate_frequency():
 
 calculate_frequency()
 """
+
+# 12/2 HW:
+
+# - Add tools in tk and cv2 to ensure the hardware is real-time facilitating with mouse & keyboard
+# - Combine the eye-tracking module that we have covered in the middle of this past month
+# - Communicate with Marisabel about each .py files that needs revision
+
+# Task 0: GUI
+# - Build the tk and pynput module for handling:
+#   - A user's input with the mouse and the keyboard. 1 click of mouse counts as 1, and 1 press of any non-ESC key counts as 1. Separate the counters.
+#   - A user's movement on the camera. Define a certain distance of 1 unit's bias, and move on with another.
+#   - Any potential components addition onto the hardware.
+# - Collect the input data so that they can be dumped into an array.
+
+# Task 1: Detection with OpenCV and pycharm
+# - Define feature arrays so that we can also find:
+#   - Eyebrows
+#   - Mouth
+#   - Nose
+# - Change the parameters for the model that we have had.
+#   - Try to form different combinations. Do they populate different results? How do they differ?
+#   - Can the features in the previous questions be used as auxiliary components for eye-tracking?
+#   - Embed this parameter-change module into the code that we have.
+
+# Task 2: Analytics for the Detection
+# - Analyze the accuracy for the detection task.
+#   - Will we be able to find alternatives for metrics other than accuracies, or we actually do not?
+#   - Create another module if needed, in terms of getting the analytics stored and displayed.
+# - How we can show them to the external audience?
+#   - Create a dashboard if we need one. In Python there is a module called matplotlib.
+#   - Can we embed them into our GUI module?
 
 
 
