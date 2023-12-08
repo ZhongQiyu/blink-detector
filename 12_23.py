@@ -348,6 +348,10 @@ calculate_frequency()
 #   - Create a dashboard if we need one. In Python there is a module called matplotlib.
 #   - Can we embed them into our GUI module?
 
+# REMEMBER THE MEMBERSHIPS OF TRIAL FOR PYCHARM IN HIS MACHINE
+
+
+
 
 
 # 12/8-12/9
