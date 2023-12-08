@@ -1,23 +1,26 @@
 # 11/24-11/25 (Thanksgiving)
 
 # Task 0. User Control
-# - pynput.mouse: write a program that -
+
+# - write a program that:
 #   - defines a range on the screen where the mouse CAN BE put in
 #   - detect the mouse and determine if the mouse is within the range
 #   - if the mouse is not within the range, report where it is and print a warning message
 #   - otherwise print "LEGIT LOCATION"
 
-range = [200,200,200,200]
+dims = [200, 200, 200, 200]
 X = 200
 Y = 200
 Width = 200
 Height = 200
 
-def mouse_check(xory,pos, add):
+
+def mouse_check(xory, pos, add):
     if pos >= xory and pos <= (xory + add):
         return "Legit Location!"
     else:
         return "Warning: Not In range!"
+
 
 def on_move(x, y):
     if mouse_check(x, X, Width) == "Legit Location!" and mouse_check(y, Y, Height) == "Legit Location!":
@@ -25,12 +28,13 @@ def on_move(x, y):
     else:
         print(f"Warning! Mouse is not in range! Mouse is at {x}, {y}")
 
-# define the Listener class
 
 """
+# define the Listener class
 with Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll) as listener:
     listener.join()
 """
+
 
 # 11/24-11/25 HW:
 
@@ -46,59 +50,6 @@ with Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll) as listen
 # - *create listeners for both the mouse and the keyboard, and embed the functions into a Python class.
 #   - when we invoke the class, would we involve any issue? Why?
 #   - print the information of the process for both listeners. give a try.
-
-import tkinter as tk
-
-class MyGui:
-    def __init__(self):
-        self.root = tk.Tk()
-        self.root.geometry("500x500")
-        self.root.title("My Program")
-        self.root.resizable(False, False)
-
-        """Timer"""
-
-        self.timer_text = tk.Label(self.root, text="Time Elapsed: 0", font=("Arial", 18))
-        self.timer_text.pack(padx=10, pady=10)
-
-        self.time = 0
-        self.update_timer()
-
-        """Data to list"""
-        self.text_label = tk.Label(self.root, text = "Data --> List Converter", font = ("Arial", 20))
-        self.text_label.pack()
-
-        self.textbox = tk.Text(self.root, height=1, font=("Arial", 18))
-        self.textbox.pack()
-
-        self.list_convert = tk.Button(self.root, text = "Convert to list", font = ("Arial", 18), command = self.show_list)
-        self.list_convert.pack()
-
-        self.result = tk.Label(self.root, text = "", font = ("Arial", 20))
-        self.result.pack()
-
-        """Color Changer"""
-        self.change_background_color_button = tk.Button(self.root, text = "Random Color Change", font = ("Arial", 18), command = self.change_color)
-        self.change_background_color_button.pack()
-        self.colors = ["blue", "red", "pink", "green", "yellow", "brown", "purple", "white"]
-        
-        self.root.mainloop()
-
-    def update_timer(self):
-        self.timer_text.config(text=f"Time Elapsed: {self.time}")
-        self.time += 1
-        self.root.after(1000, self.update_timer)  # Update every 1000ms (1 second)
-    def show_list(self):
-        text = self.textbox.get("1.0", tk.END).strip()
-        result_array = text.split(" ")
-        self.result.config(text=str(result_array))
-    def change_color(self):
-        import random
-        random_color = self.colors[random.randint(0,len(self.colors) - 1)]
-        self.root.configure(bg = random_color)
-
-# obj = MyGui()
-
 
 
 # 12/1-12/2
@@ -118,21 +69,21 @@ class myGTP():
         self.root.geometry("500x500")
         self.root.title("My GTP")
         self.root.resizable(False, False)
-        self.patterns = {  #First array is for true and falses, second is for status
-            "coma" : [],
-            "semicolon" : [],
-            "period" : [],
-            "question_mark" : [],
-            "exclamation_mark" : []
+        self.patterns = {  # First array is for true and falses, second is for status
+            "coma": [],
+            "semicolon": [],
+            "period": [],
+            "question_mark": [],
+            "exclamation_mark": []
         }
 
-        self.textbox = tk.Text(self.root, height=3, font=("Arial", 18)) 
+        self.textbox = tk.Text(self.root, height=3, font=("Arial", 18))
         self.textbox.pack(pady=3)
 
-        self.button = tk.Button(self.root, font = ("Arial", 18), text = "GPTlize", command=self.GPTlize)
+        self.button = tk.Button(self.root, font=("Arial", 18), text="GPTlize", command=self.GPTlize)
         self.button.pack(pady=3)
         self.root.mainloop()
-    
+
     def get_index(self, string, symbol):
         splited = string
         frequencies = []
@@ -140,15 +91,15 @@ class myGTP():
             if splited[letter_index] == symbol:
                 frequencies.append(letter_index)
         return frequencies
-    
+
     def get_count(self, string, symbol):
-        array = self.get_index(string,symbol)
+        array = self.get_index(string, symbol)
         return len(array)
-    
+
     def translate_symbol(self, symbol):
         translated_symbol = ""
-        if symbol == ".": # 
-            translated_symbol = "coma" # "comma"
+        if symbol == ".":  #
+            translated_symbol = "coma"  # "comma"
         elif symbol == ";":
             translated_symbol = "semicolon"
         elif symbol == ".":
@@ -164,13 +115,14 @@ class myGTP():
         text = txt.split()
 
         symbol_list = [",", ";", ".", "?", "!"]
-        
+
         for symbol in symbol_list:
-            print(symbol) # debug from here
+            print(symbol)  # debug from here
             print(self.translate_symbol(symbol))
             self.patterns[self.translate_symbol(symbol)].append(self.get_index(text, symbol))
-        
+
         print(self.patterns)
+
 
 # obj = myGTP()
 
@@ -198,8 +150,6 @@ for key in self.patterns:
 # 12/1 HW: Fix myGTP so that it fully functions
 
 
-
-
 # 12/2:
 
 # Task 0. Eye-Tracking and Tiredness Detection
@@ -216,16 +166,10 @@ for key in self.patterns:
 #   - *Can we have a better result by changing our parameters?
 
 
-
-
 # Task 1. User Interaction:
 
-# - libraries: tkinter and pynput
-#   - The event-oriented programming toolset, assmimilating JavaScript's DOM parsing
-#   - Inherit the positions from the data provided within Python's scope
-
-# Task 1: GUI Design and Control w/ turtle
-# - Draw any shape that assimilates an 3D object.
+# - GUI Design and Control: turtle
+#   - Draw any shape that assimilates an 3D object.
 #   - e.g. it can be a cone, a cube, a pyramid, etc.
 #   - Reveal the angle of view as well as you can.
 
@@ -262,7 +206,12 @@ def cube(x,y,w):
     t.forward(w * ratio) 
 """
 
-# Task 2: GUI Design and Control w/ tk and pynput
+# Task 2: GUI Design and Control w/ tkinter and pynput
+
+# - GUI Design and Control: tkinter
+#   - The event-oriented programming toolset, assmimilating JavaScript's DOM parsing
+#   - Inherit the positions from the data provided within Python's scope
+
 # - Build a simple program that allows the user to:
 #   - Click on a button that prompts the basic information; parse the information into a list; display the list.
 #   - Change the color of the window. The choice of colors can be either user-input or built-in. If user-input, include another button that behaves similarly as the first one does.
@@ -275,47 +224,55 @@ def cube(x,y,w):
 #       - when we invoke the class, would we involve any issue? Why?
 #       - print the information of the process for both listeners. give a try.
 
-"""
 import time
 import pynput
-from pynput.mouse import Listener   
+from pynput.mouse import Listener
 from pynput import keyboard
+
 
 class pynput_frequency():
     def __init__(self):
-        self.key_dict = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+        self.key_dict = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's',
+                         't', 'u', 'v', 'w', 'x', 'y', 'z']
         self.key_data = {}
+
         for i in self.key_dict:
             self.key_data[i] = 0
+
         for key in keyboard.Key:
-            self.key_data[str(key)] = 0 
+            self.key_data[str(key)] = 0
+
         print(self.key_data)
+
         with keyboard.Listener(on_press=self.on_press) as listener:
             listener.join()
 
-    def on_press(self, key):      
-        try: 
+    def on_press(self, key):
+        try:
             key_char = key.char
         except AttributeError:
             key_char = str(key)
         self.key_data[key_char] += 1
+
 
 class timer():
     def __init__(self):
         self.time = 0
         while True:
             self.change_time()
+
     def change_time(self):
         self.time += 1
         time.sleep(1)
+
 
 def calculate_frequency():
     frecuency_obj = pynput_frequency()
     timer_obj = timer()
     time_value = timer_obj.time
 
-calculate_frequency()
-"""
+
+# calculate_frequency()
 
 # 12/2 HW:
 
@@ -350,8 +307,102 @@ calculate_frequency()
 
 # REMEMBER THE MEMBERSHIPS OF TRIAL FOR PYCHARM IN HIS MACHINE
 
+# LEGACY FROM tk
 
+import tkinter as tk
+from PIL import Image, ImageTk
+import threading
 
+class MyGui:
+
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.geometry("500x500")
+        self.root.title("My Program")
+        self.root.resizable(False, False)
+
+        """Timer"""
+        self.timer_text = tk.Label(self.root, text="Time Elapsed: 0", font=("Arial", 18))
+        self.timer_text.pack(padx=10, pady=10)
+        self.time = 0
+        self.update_timer()
+
+        """Data to list"""
+        "Need to revise the trimming part"
+        self.text_label = tk.Label(self.root, text="Data --> List Converter", font=("Arial", 20))
+        self.text_label.pack()
+
+        self.textbox = tk.Text(self.root, height=1, font=("Arial", 18))
+        self.textbox.pack()
+
+        self.list_convert = tk.Button(self.root, text="Convert to list", font=("Arial", 18), command=self.show_list)
+        self.list_convert.pack()
+
+        self.result = tk.Label(self.root, text="", font=("Arial", 20))
+        self.result.pack()
+
+        """Color Changer"""
+        self.change_background_color_button = tk.Button(self.root, text="Random Color Change", font=("Arial", 18),
+                                                        command=self.change_color)
+        self.change_background_color_button.pack()
+        self.colors = ["blue", "red", "pink", "green", "yellow", "brown", "purple", "white"]
+
+        self.root.mainloop()
+
+    def update_timer(self):
+        self.timer_text.config(text=f"Time Elapsed: {self.time}")
+        self.time += 1
+        self.root.after(1000, self.update_timer)  # Update every 1000ms (1 second)
+
+    def show_list(self):
+        text = self.textbox.get("1.0", tk.END).strip()
+        result_array = text.split(" ")
+        self.result.config(text=str(result_array))
+
+    def change_color(self):
+        import random
+        random_color = self.colors[random.randint(0, len(self.colors) - 1)]
+        self.root.configure(bg=random_color)
+
+    # ****** TO TEST ******
+    def setup_canvas(self):
+        self.canvas = tk.Canvas(self.root, width=400, height=300)
+        self.canvas.pack()
+        # 画一个简单的矩形
+        self.canvas.create_rectangle(50, 50, 150, 150, fill="blue")
+
+    def setup_camera(self):
+        self.camera_button = tk.Button(self.root, text="Open Camera", command=self.open_camera)
+        self.camera_button.pack()
+
+    def open_camera(self):
+        # 创建一个新窗口
+        self.camera_window = tk.Toplevel(self.root)
+        self.camera_label = tk.Label(self.camera_window)
+        self.camera_label.pack()
+
+        # 启动一个线程来捕捉摄像头图像
+        self.camera_thread = threading.Thread(target=self.capture_image)
+        self.camera_thread.start()
+
+    def capture_image(self):
+        self.cap = cv2.VideoCapture(0)
+        while True:
+            ret, frame = self.cap.read()
+            if ret:
+                # 将 OpenCV 图像格式转换为 Tkinter 可用的格式
+                cv_img = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                img = Image.fromarray(cv_img)
+                imgtk = ImageTk.PhotoImage(image=img)
+                self.camera_label.imgtk = imgtk
+                self.camera_label.configure(image=imgtk)
+            self.camera_label.after(20, self.capture_image)
+    # ****** TO TEST ******
+
+# 在主函数中创建 GUI 实例
+if __name__ == "__main__":
+    gui = MyGui()
+    gui.setup_camera()
 
 
 # 12/8-12/9
@@ -392,7 +443,6 @@ calculate_frequency()
 #   - ...
 
 
-
 # 12/15-12/16
 
 # Project Module 3: Mouse and Keyboard Tracker
@@ -411,7 +461,6 @@ calculate_frequency()
 #   - simulate_activity_labels(inactivity_data, activity_data, threshold_ratio, activity_threshold):
 #   - train_model
 # - Do Prediction
-
 
 
 # 12/22-12/23
