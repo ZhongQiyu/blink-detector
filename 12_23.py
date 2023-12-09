@@ -405,6 +405,51 @@ if __name__ == "__main__":
     gui.setup_camera()
 
 
+
+# 12/8-12/9
+
+# Project Module 1: AI Introduction (and Modeling)
+
+# - CV
+#   - ...
+
+import cv2
+import dlib
+
+# 加载面部检测器
+detector = dlib.get_frontal_face_detector()
+predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")  # 您需要下载这个预训练模型
+
+cap = cv2.VideoCapture(0)
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    faces = detector(gray)
+
+    for face in faces:
+        landmarks = predictor(gray, face)
+
+        # 假设眼睛是第37到第42点
+        for n in range(36, 42):
+            x = landmarks.part(n).x
+            y = landmarks.part(n).y
+            cv2.circle(frame, (x, y), 4, (255, 0, 0), -1)
+
+    cv2.imshow("Frame", frame)
+
+    key = cv2.waitKey(1)
+    if key == 27:  # ESC键
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+
+
+    
 # 12/8-12/9
 
 # Project Module 1: AI Introduction (and Modeling)
@@ -419,8 +464,134 @@ if __name__ == "__main__":
 #       - Takes a complete user input of an image stored in their local computer, and
 #       - Transform that image into a black-and-white one.
 
-# - CV
+# Project Module 2: Eyes Blink Engine
+
+# - MediaPipe: Face Mesh
+#   - Feature Detection
+#   - Feature Construction
 #   - ...
+
+# - cv2: Web Cam
+#   - Frames and Landmarks
+#   - Video Capture
+#   - ...
+
+# MAIN GUI LAYOUT:
+
+# Hint: What do you need to define? Why and how?
+
+# 1. Title (AI Timetracker)
+
+# 2. User Usage
+
+# 2.1 Total blink count:
+# - how often the user blinks their eyes: blinks per minute rate (constantly updated), maximum blink count until break
+# - bar dragger for person to select how strict the timer will be (Maximum blink count until break is needed
+# - GUI for break (Normally hidden)
+
+# 2.2 Total time mouse usage count:
+# - how often the user changes the area where mouse is hovered
+
+# 2.3 Total keyboard hit count:
+# - for every key, how often a user hits the keyboard every minute
+
+import turtle
+import tkinter as tk
+import pynput
+
+class MyGUI():
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.geometry("500x500")
+        self.root.title("AI Timetracker") # program title
+        self.root.resizable(True, True)
+        self.root.resizable(True, True)
+
+        self.title_txt = tk.Label(self.root, text = "AI Timer", font = ("Arial", 20)) # program window, at the top
+        self.title_txt.pack()
+
+        self.canvas = tk.Canvas(self.root, width=400, height=100)
+        self.canvas.pack()
+
+        self.make_drag_bar()
+       
+        self.root.mainloop()
+
+    def make_drag_bar(self):
+         # Define bar coordinates
+        self.bar_start = 50
+        self.bar_end = 350
+        self.bar_top = 50
+        self.bar_bottom = 50
+
+        # Create a bar on the canvas
+        self.canvas.create_line(self.bar_start, self.bar_top, self.bar_end, self.bar_bottom, width=10)
+
+        # Create a circle on the bar
+        self.circle_radius = 10
+        self.circle = self.canvas.create_oval(90 - self.circle_radius, 40, 110 - self.circle_radius, 60, fill='blue') # Initial position of the circle
+
+        # Bind mouse events to the circle
+        self.canvas.tag_bind(self.circle, "<ButtonPress-1>", self.on_drag_start)
+        self.canvas.tag_bind(self.circle, "<B1-Motion>", self.on_drag_motion)
+
+    def on_drag_start(self, event):
+        # Record the item and its location
+        self.drag_data = {"x": event.x, "y": event.y, "item": self.circle}
+
+    def on_drag_motion(self, event):
+        # Compute how much the mouse has moved
+        delta_x = event.x - self.drag_data["x"]
+
+        # Get the current position of the circle
+        coords = self.canvas.coords(self.drag_data["item"])
+        new_x1 = coords[0] + delta_x
+        new_x2 = coords[2] + delta_x
+
+        # Check if the new position is within the bounds of the bar
+        if new_x1 >= self.bar_start - self.circle_radius and new_x2 <= self.bar_end + self.circle_radius:
+            # Move the object the appropriate amount
+            self.canvas.move(self.drag_data["item"], delta_x, 0)
+
+        # Record the new position
+        self.drag_data["x"] = event.x
+
+my_obj = MyGUI()
+
+# HW:
+# - Build a complete, running GUI even w/o the true functions
+# - Call the libraries that are invoking the system-level file operations
+# - *Write test methods for the written MyGUI class
+
+# t = turtle.Turtle()
+
+
+
+# 12/15-12/16
+
+# Project Module 3: Mouse and Keyboard Tracker
+
+# - Keyboard and Mouse Tracker
+#   - Define a callback function for mouse events (pynput.mouse.Listener.stop)
+#   - Define a callback function for keyword events (pynput.keyboard.Listener.stop, pynput.keyboard.Key, and pynput.keyboard.KeyCode)
+#   - Track user activity (threading.Thread and StopException)
+#   - Run Tracker
+#   - Test Tracker
+
+# Project Module 4: Activity and Inactivity Engine
+
+# - Simulate Data
+#   - simulate_blink_rate(num_intervals):
+#   - simulate_usage_time(session_duration_minutes, max_interval_duration_minutes):
+#   - simulate_inactivity(usage_data):
+#   - simulate_activity_labels(inactivity_data, activity_data, threshold_ratio, activity_threshold):
+#   - train_model
+
+# - Predict
+
+# 12/22-12/23
+
+# Project Module 5: Complete Project Engine
 
 # - Data Visualization：matplotlib
 #   - Build dashboard-like logic to report the output of the model
@@ -431,38 +602,3 @@ if __name__ == "__main__":
 #   - Invoke Adobe PDF in order to get the reports sealed and transported
 #   - Embed the results into a website so that the web-end at the user can be applied
 #   - ...
-
-# Project Module 2: Eyes Blink Engine
-
-# - MediaPipe: Face Mesh
-#   - ...
-
-# - webcam:
-#   - Frames and Landmarks
-#   - Video Capture
-#   - ...
-
-
-# 12/15-12/16
-
-# Project Module 3: Mouse and Keyboard Tracker
-# - Keyboard and Mouse Tracker
-#   - Define a callback function for mouse events (pynput.mouse.Listener.stop)
-#   - Define a callback function for keyword events (pynput.keyboard.Listener.stop, pynput.keyboard.Key, and pynput.keyboard.KeyCode)
-#   - Track user activity (threading.Thread and StopException)
-#   - Run Tracker
-#   - Test Tracker
-
-# Project Module 4: Activity and Inactivity Engine
-# - Simulate Data
-#   - simulate_blink_rate(num_intervals):
-#   - simulate_usage_time(session_duration_minutes, max_interval_duration_minutes):
-#   - simulate_inactivity(usage_data):
-#   - simulate_activity_labels(inactivity_data, activity_data, threshold_ratio, activity_threshold):
-#   - train_model
-# - Do Prediction
-
-
-# 12/22-12/23
-
-# Project Module 5: Complete Project Engine
