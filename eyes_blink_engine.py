@@ -117,10 +117,6 @@ class EyeBlinkDetector:
 
         return frame
 
-    self.advanced_visual_feedback(frame, self.total_blinks, self.CEF_counter)
-
-    return frame
-
     def fetch_face_data(self, face_mesh, frame):
         frame = cv2.resize(frame, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
         frame_height, frame_width = frame.shape[:2]
@@ -229,13 +225,6 @@ class EyeBlinkDetector:
                 self.show_warning_message(frame, "频繁眨眼，注意休息！")
                 self.last_warning_time = current_time
 
-    
-
-    %%timeit
-
-    import pprint
-    pp = pprint.PrettyPrinter()
-
     """
     def show_warning_message(self, frame, message):
         # 显示警告信息
@@ -261,3 +250,10 @@ class EyeBlinkDetector:
 
         # 返回一个合理的阈值
         return (min_frames + max_frames) // 2  # 取平均值作为初始阈值
+
+
+
+"""
+import pprint
+pp = pprint.PrettyPrinter()
+"""

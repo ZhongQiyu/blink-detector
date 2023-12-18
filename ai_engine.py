@@ -56,6 +56,7 @@ def run_engine():
 
     cv2.destroyAllWindows()
     cap.release()
+    
     # global start_time, start_time_blink, CEF_counter, total_blinks, text, tracker, is_listening, is_face_detected
     # frame_counter = 0
     # cap = cv2.VideoCapture(0)
