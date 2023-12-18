@@ -83,3 +83,53 @@ with mp_face_mesh.FaceMesh(
 
 cap.release()
 cv2.destroyAllWindows()
+
+
+
+# 11/15:
+
+# 1. What is pynput used for along with the AI module; fix messy code
+# 2. How can we set up the AI engine so that it becomes something usable
+# 3. Whether I should extend the course or not
+
+# 1.
+# - trace: mouse or key
+# - mouse, on_move, on_click and on_scroll
+# - key, on_press and on_release
+# - Q: why we are tracing either or both? if so, then is that a AND or an OR
+# - A: sth is missing
+
+# 2. TBA
+
+# 3.
+# - Lesson 14 - MESSAGE Marisabel
+# - Arrange The Classes
+# - Final Goal: Report an APP
+# - Final Goal:
+
+
+
+# 12/1:
+
+# 1. Compress the class files in HS Project
+# 2. Create GitHub repos for HS Project and Python 3 (PyGame); Python 1 if needed; Individual Project PENDING
+# 3. Contact Marisabel about extension in HS Project
+# 4. Compile an own version of the running project in HS Project
+# 5. Compile HW for all classes
+
+# 12/2:
+
+# 12/3:
+
+# 12/4:
+
+# 12/5:
+
+# 1. Create an HTML for demoing the APP using Google Site
+
+# 12/6:
+
+# 1. Sync the whole not just the eyes_rest-main repository with the GitHub token
+# 2. Info-hide the project if needed
+
+# 12/7:

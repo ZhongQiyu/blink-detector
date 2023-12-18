@@ -2,11 +2,11 @@
 
 # Task 0. User Control
 
-# - write a program that:
-#   - defines a range on the screen where the mouse CAN BE put in
-#   - detect the mouse and determine if the mouse is within the range
-#   - if the mouse is not within the range, report where it is and print a warning message
-#   - otherwise print "LEGIT LOCATION"
+# Exercise: write a program that
+# - defines a range on the screen where the mouse CAN BE put in
+# - detect the mouse and determine if the mouse is within the range
+# - if the mouse is not within the range, report where it is and print a warning message
+# - otherwise print "LEGIT LOCATION"
 
 dims = [200, 200, 200, 200]
 X = 200
@@ -50,6 +50,8 @@ with Listener(on_move=on_move, on_click=on_click, on_scroll=on_scroll) as listen
 
 
 # 12/1-12/2
+
+
 
 # 12/1:
 
@@ -120,7 +122,6 @@ class myGTP():
 
         print(self.patterns)
 
-
 # obj = myGTP()
 
 """
@@ -147,6 +148,7 @@ for key in self.patterns:
 # 12/1 HW: Fix myGTP so that it fully functions
 
 
+
 # 12/2:
 
 # Task 0. Eye-Tracking and Tiredness Detection
@@ -161,6 +163,7 @@ for key in self.patterns:
 #   - Use cv2.imread, face_detection and drawing_utils in mediapipe.solutions to detect your face.
 #   - Interpret the results. How is the image processed? What does each parameter in the detection method do? How good a result would be?
 #   - *Can we have a better result by changing our parameters?
+
 
 
 # Task 1. User Interaction:
@@ -613,6 +616,10 @@ my_obj = MyGUI()
 # - Call the libraries that are invoking the system-level file operations
 # - *Write test methods for the written MyGUI class
 
+# t = turtle.Turtle()
+
+# How to change the textbox's locations so that they form in a single line
+
 
 
 # 12/8-12/9
@@ -629,6 +636,9 @@ my_obj = MyGUI()
 #       - Takes a complete user input of an image stored in their local computer, and
 #       - Transform that image into a black-and-white one.
 
+# - CV
+#   - ...
+
 # - Data Visualization：matplotlib
 #   - Build dashboard-like logic to report the output of the model
 #   - Use certain kinds of charts to show different kinds of analytics
@@ -638,6 +648,8 @@ my_obj = MyGUI()
 #   - Invoke Adobe PDF in order to get the reports sealed and transported
 #   - Embed the results into a website so that the web-end at the user can be applied
 #   - ...
+
+
 
 # Project Module 2: Eyes Blink Engine
 
@@ -650,17 +662,6 @@ my_obj = MyGUI()
 #   - Video Capture
 #   - ...
 
-"""MAIN GUI LAYOUT"""
-"""
-# Title (AI Timetracker)
-# Bar dragger for person to select how strict the timer will be (Maximum blink count until break is needed
-# Total time usage count
-# Total blink count
-# Blinks per minute rate (constantly updated)
-# Maximim blink count until break
-# Gui for break (Normally hidden)
-"""
-
 # API:
 # Trace how often a user hits the keyboard every minute, for every key
 # Trace how often the user changes the area where mouse is hovered
@@ -668,17 +669,16 @@ my_obj = MyGUI()
 
 # Hints:
 # What do you need to define? Why and how?
-# How to change the textbox's locations so that they form in a single line?
-
 
 import turtle
 import tkinter as tk
-import pynput
+#import pynput
 import time
 
+#t = turtle.Turtle()
 
 class myGui():
-    """Constructor""" 
+    """/////////////////////////////////////////////////////////////////Constructor////////////////////////////////////////////////////////////////////""" 
     def __init__(self):
         self.root = tk.Tk()
         self.root.geometry("500x500")
@@ -689,11 +689,13 @@ class myGui():
         self.title_txt = tk.Label(self.root, text = "AI Timer", font = ("Arial", 20)) # program window, at the top
         self.title_txt.pack()
         
+        self.make_drag_bar()
+        
+
         self.frame = tk.Frame(self.root)
         self.frame.pack()
         self.strictness_textbox = tk.Text(self.frame, font=("Arial", 20), height = 1, width = 5)
         self.button = tk.Button(self.frame, text="Set Strictness", font=("Arial", 20), command = self.onclick_updateBarText)
-        
         # Place widgets using grid
         self.strictness_textbox.grid(row=0, column=0)
         self.button.grid(row=0, column=1)
@@ -701,9 +703,9 @@ class myGui():
 
         #tk.Entry()
 
+
         self.bar_text = tk.Label(self.root, text = "Max blink count (Strictness): 0", font = ("Arial", 20))
         self.bar_text.pack()
-        self.make_drag_bar()
 
         self.total_time_elapsed = tk.Label(self.root, text = "Total Time Elapsed: 0", font = ("Arial", 20))
         self.total_time_elapsed.pack()
@@ -721,11 +723,11 @@ class myGui():
 
         self.root.mainloop()
 
-    /
+    """/////////////////////////////////////////////////////////////////Drag bar////////////////////////////////////////////////////////////////////""" 
+
     def make_drag_bar(self):
         self.canvas = tk.Canvas(self.root, width=400, height=100)
         self.canvas.pack()
-        
         # Define bar coordinates
         self.bar_start = 50
         self.bar_end = 350
@@ -772,8 +774,8 @@ class myGui():
             print("Invalid input! Please enter a numeric value.")
             return
 
-        max_count = 300  # maximum value for strictness; try to get the input, but not using input()
-        bar_length = self.bar_end - self.bar_start  # length of the bar
+        max_count = 300  # Maximum value for strictness; try to get the input, but not using input()
+        bar_length = self.bar_end - self.bar_start  # Length of the bar
 
         if 0 <= count <= max_count:
             # Scale the position on the bar according to the strictness value
@@ -787,6 +789,214 @@ class myGui():
             self.updateBarText()
         else:
             print(f"Invalid range! Please enter a value between 0 and {max_count}.")
+
+
+
+    def updateBarText(self):
+        coords = self.canvas.coords(self.circle)
+        # Calculate the current x-coordinate (use the average of the x-coordinates of the left and right sides of the circle)
+        current_x = (coords[0] + coords[2]) / 2
+        self.bar_count = current_x - self.bar_start # either something between 60 and 120
+        self.bar_text.config(text=f"Max blink count (Strictness): {self.bar_count:.0f}")
+        
+    """///////////////////////////////////////////////////////////////////Update Total Time Elapsed Function//////////////////////////////////////////////////////////////////""" 
+
+    def change_total_time_count(self):
+        self.total_time_elapsed.config(text=f"Total Time Elapsed: {self.total_time_count}")
+        self.total_time_count += 1
+        self.root.after(1000, self.change_total_time_count) 
+
+my_obj = myGui()
+
+# GUI:
+# scale the window to fit your screen (e.g. mine is 2560*1600); can be 1920*1200
+# relocate the statistics as a transparent box in top-left/top-right/bottom-left/bottom-right
+# design where the buttons and dragger would be (this will be part of my tasks)
+
+# 12/8-12/9
+
+# Project Module 1: AI Introduction (and Modeling)
+
+# - AI and scikit-learn
+#   - We deal with arrays of data since the beginning of the class. Write a program that takes an user input of just an integer (n; n <= 8), and then:
+#   - Generate an n-dimensional array of (0) zeroes, (1) ones, (2) random integers, and (3) random floating point numbers.
+#   - In our final project, we would be dealing with image data.
+#       - How can the images be decomposed into meaningful units? Do we need decomposition?
+#       - How can the n-dimensional arrays be applied to the processes?
+#   - *Write a program that:
+#       - Takes a complete user input of an image stored in their local computer, and
+#       - Transform that image into a black-and-white one.
+
+# - CV
+#   - ...
+
+# - Data Visualization：matplotlib
+#   - Build dashboard-like logic to report the output of the model
+#   - Use certain kinds of charts to show different kinds of analytics
+#   - ...
+
+# - PDF Report：PyPDF2, ReportLab
+#   - Invoke Adobe PDF in order to get the reports sealed and transported
+#   - Embed the results into a website so that the web-end at the user can be applied
+#   - ...
+
+# Project Module 2: Eyes Blink Engine
+
+# - MediaPipe: Face Mesh
+#   - 
+#   - ...
+
+# - cv2: Web Cam
+#   - Frames and Landmarks
+#   - Video Capture
+#   - ...
+
+# API:
+# Trace how often a user hits the keyboard every minute, for every key
+# Trace how often the user changes the area where mouse is hovered
+# Trace how often the user blinks their eyes
+
+# Hints:
+# What do you need to define? Why and how?
+
+
+
+
+"""MAIN GUI LAYOUT"""
+"""
+# Title (AI Timetracker)
+# Bar dragger for person to select how strict the timer will be (Maximum blink count until break is needed
+# Total time usage count
+# Total blink count
+# Blinks per minute rate (constantly updated)
+# Maximim blink count until break
+# Gui for break (Normally hidden)
+"""
+
+
+
+
+import turtle
+import tkinter as tk
+#import pynput
+import time
+
+#t = turtle.Turtle()
+
+class myGui():
+    """/////////////////////////////////////////////////////////////////Constructor////////////////////////////////////////////////////////////////////""" 
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.geometry("500x500")
+        self.root.title("AI Timetracker") # program title
+        self.root.resizable(True, True)
+        self.root.resizable(True, True)
+
+        self.title_txt = tk.Label(self.root, text = "AI Timer", font = ("Arial", 20)) # program window, at the top
+        self.title_txt.pack()
+        
+        self.make_drag_bar()
+        
+
+        self.frame = tk.Frame(self.root)
+        self.frame.pack()
+        self.strictness_textbox = tk.Text(self.frame, font=("Arial", 20), height = 1, width = 5)
+        self.button = tk.Button(self.frame, text="Set Strictness", font=("Arial", 20), command = self.onclick_updateBarText)
+        # Place widgets using grid
+        self.strictness_textbox.grid(row=0, column=0)
+        self.button.grid(row=0, column=1)
+        #_tkinter.TclError: cannot use geometry manager grid inside . which already has slaves managed by pack
+
+        #tk.Entry()
+
+
+        self.bar_text = tk.Label(self.root, text = "Max blink count (Strictness): 0", font = ("Arial", 20))
+        self.bar_text.pack()
+
+        self.total_time_elapsed = tk.Label(self.root, text = "Total Time Elapsed: 0", font = ("Arial", 20))
+        self.total_time_elapsed.pack()
+        self.total_time_count = 0
+        self.change_total_time_count()
+
+        self.total_blink_count = tk.Label(self.root, text = "Total Blink Count: 0", font = ("Arial", 20))
+        self.total_blink_count.pack()
+
+        self.average_blink_rate = tk.Label(self.root, text = "Average Blink Rate: 0", font = ("Arial", 20))
+        self.average_blink_rate.pack()
+
+        self.alarm = tk.Label(self.root, text = "You need a break!", font = ("Arial", 30))
+        #self.alarm.pack()
+
+        self.root.mainloop()
+
+    """/////////////////////////////////////////////////////////////////Drag bar////////////////////////////////////////////////////////////////////""" 
+
+    def make_drag_bar(self):
+        self.canvas = tk.Canvas(self.root, width=400, height=100)
+        self.canvas.pack()
+        # Define bar coordinates
+        self.bar_start = 50
+        self.bar_end = 350
+        self.bar_top = 50
+        self.bar_bottom = 50
+
+        # Create a bar on the canvas
+        self.canvas.create_line(self.bar_start, self.bar_top, self.bar_end, self.bar_bottom, width=10)
+        # Define circle size
+        self.circle_radius = 10
+        # Adjust the initial position of the circle to be at the edge of the bar
+        circle_x = self.bar_start + self.circle_radius
+        # Create a circle on the bar
+        self.circle = self.canvas.create_oval(circle_x - self.circle_radius, 40, circle_x + self.circle_radius, 60, fill='blue')
+        # Bind mouse events to the circle
+        self.canvas.tag_bind(self.circle, "<ButtonPress-1>", self.on_drag_start)
+        self.canvas.tag_bind(self.circle, "<B1-Motion>", self.on_drag_motion)
+
+    def on_drag_start(self, event):
+        # Record the item and its location
+        self.drag_data = {"x": event.x, "y": event.y, "item": self.circle}
+
+    def on_drag_motion(self, event):
+        # Compute the new position based on the mouse x-coordinate
+        new_x1 = event.x - self.circle_radius
+        new_x2 = event.x + self.circle_radius
+
+        # Check if the new position is within the bounds of the bar
+        if new_x1 >= self.bar_start - self.circle_radius and new_x2 <= self.bar_end + self.circle_radius:
+            # Calculate the amount to move
+            current_coords = self.canvas.coords(self.drag_data["item"])
+            move_x = event.x - (current_coords[0] + self.circle_radius)
+
+            # Move the object the appropriate amount
+            self.canvas.move(self.drag_data["item"], move_x, 0)
+            # Update the bar text to reflect the new position
+            self.updateBarText()
+
+    def onclick_updateBarText(self):
+        # Read the value from the textbox and convert it to an integer
+        try:
+            count = int(self.strictness_textbox.get("1.0", tk.END).strip())
+        except ValueError:
+            print("Invalid input! Please enter a numeric value.")
+            return
+
+        max_count = 300  # Maximum value for strictness; try to get the input, but not using input()
+        bar_length = self.bar_end - self.bar_start  # Length of the bar
+
+        if 0 <= count <= max_count:
+            # Scale the position on the bar according to the strictness value
+            scaled_position = (count / max_count) * bar_length
+            
+            # Calculate the actual x-coordinate on the canvas
+            circle_x = self.bar_start + scaled_position
+
+            # Update the position of the circle
+            self.canvas.coords(self.circle, circle_x - self.circle_radius, 40, circle_x + self.circle_radius, 60)
+            self.updateBarText()
+        else:
+            print(f"Invalid range! Please enter a value between 0 and {max_count}.")
+
+
 
     def updateBarText(self):
         coords = self.canvas.coords(self.circle)
@@ -828,109 +1038,9 @@ my_obj = myGui()
 # - aggregate the GUI part with the first AI one.
 # - *aggregate the two AI parts.
 
+
+
 ###### YOUR CODE HERE ######
-
-import tkinter as tk
-
-class MyGUI():
-    """ 简单的 GUI 类，用于展示 AI 时间追踪器 """
-
-    def __init__(self):
-        # 初始化窗口
-        self.root = tk.Tk()
-        self.root.geometry("500x500")
-        self.root.title("AI Timetracker")
-        self.root.resizable(True, True)
-
-        # 创建标题标签
-        self.title_txt = tk.Label(self.root, text="AI Timer", font=("Arial", 20))
-        self.title_txt.pack()
-
-        # 创建包含文本框和按钮的框架
-        self.frame = tk.Frame(self.root)
-        self.frame.pack()
-        self.strictness_textbox = tk.Text(self.frame, font=("Arial", 20), height=1, width=5)
-        self.strictness_textbox.grid(row=0, column=0)
-        self.button = tk.Button(self.frame, text="Set Strictness", font=("Arial", 20), command=self.set_strictness)
-        self.button.grid(row=0, column=1)
-
-        # 创建显示最大眨眼次数的标签
-        self.bar_text = tk.Label(self.root, text="Max blink count (Strictness): 0", font=("Arial", 20))
-        self.bar_text.pack()
-
-        # 创建拖动条
-        self.create_drag_bar()
-
-        # 创建显示总时间的标签
-        self.total_time_elapsed = tk.Label(self.root, text="Total Time Elapsed: 0", font=("Arial", 20))
-        self.total_time_elapsed.pack()
-        self.total_time_count = 0
-        self.update_total_time()
-
-        self.root.mainloop()
-
-    def create_drag_bar(self):
-        """ 创建拖动条 """
-        self.canvas = tk.Canvas(self.root, width=400, height=100)
-        self.canvas.pack()
-
-        self.bar_start = 50
-        self.bar_end = 350
-        self.bar_top = 50
-        self.bar_bottom = 50
-
-        self.canvas.create_line(self.bar_start, self.bar_top, self.bar_end, self.bar_bottom, width=10)
-
-        self.circle_radius = 10
-        circle_x = self.bar_start + self.circle_radius
-        self.circle = self.canvas.create_oval(circle_x - self.circle_radius, 40, circle_x + self.circle_radius, 60, fill='blue')
-
-        self.canvas.tag_bind(self.circle, "<ButtonPress-1>", self.on_drag_start)
-        self.canvas.tag_bind(self.circle, "<B1-Motion>", self.on_drag_motion)
-
-    def on_drag_start(self, event):
-        """ 拖动开始时的事件处理 """
-        self.drag_data = {"x": event.x, "y": event.y, "item": self.circle}
-
-    def on_drag_motion(self, event):
-        """ 拖动过程中的事件处理 """
-        new_x1 = event.x - self.circle_radius
-        new_x2 = event.x + self.circle_radius
-
-        if new_x1 >= self.bar_start - self.circle_radius and new_x2 <= self.bar_end + self.circle_radius:
-            move_x = event.x - (self.canvas.coords(self.drag_data["item"])[0] + self.circle_radius)
-            self.canvas.move(self.drag_data["item"], move_x, 0)
-            self.update_strictness_label()
-
-    def set_strictness(self):
-        """ 从文本框读取严格度并更新圆圈位置 """
-        try:
-            count = int(self.strictness_textbox.get("1.0", tk.END).strip())
-            max_count = 300
-            bar_length = self.bar_end - self.bar_start
-
-            if 0 <= count <= max_count:
-                scaled_position = (count / max_count) * bar_length
-                circle_x = self.bar_start + scaled_position
-                self.canvas.coords(self.circle, circle_x - self.circle_radius, 40, circle_x + self.circle_radius, 60)
-                self.update_strictness_label()
-            else:
-                print(f"Invalid range! Please enter a value between 0 and {max_count}.")
-        except ValueError:
-            print("Invalid input! Please enter a numeric value.")
-
-    def update_strictness_label(self):
-        """ 更新严格度标签显示当前值 """
-        current_x = (self.canvas.coords(self.circle)[0] + self.canvas.coords(self.circle)[2]) / 2
-        self.bar_count = current_x - self.bar_start
-        self.bar_text.config(text=f"Max blink count (Strictness): {int(self.bar_count)}")
-
-    def update_total_time(self):
-        """ 更新并显示总时间 """
-        self.total_time_elapsed.config(text=f"Total Time Elapsed: {self.total_time_count}")
-        self.total_time_count += 1
-        self.root.after(1000, self.update_total_time)
-
 
 
 
@@ -958,95 +1068,6 @@ class MyGUI():
 
 
 
-import random
-
-class ActivitySimulator:
-    def __init__(self, inactivity_threshold_ratio, activity_threshold):
-        self.inactivity_threshold_ratio = inactivity_threshold_ratio
-        self.activity_threshold = activity_threshold
-
-    def simulate_blink_rate(self, num_intervals):
-        blink_data = [random.randint(2, 40) for _ in range(num_intervals)]
-        return blink_data
-
-    def simulate_usage_time(self, session_duration_minutes, max_interval_duration_minutes):
-        usage_data = []
-        remaining_time = session_duration_minutes
-
-        while remaining_time > 0:
-            activity_duration = min(random.randint(10, max_interval_duration_minutes), remaining_time)
-            usage_data.append(activity_duration)
-            remaining_time -= activity_duration + 1
-        return usage_data
-
-    def simulate_inactivity(self, usage_data):
-        inactivity_data = [random.randint(0, duration // 2) for duration in usage_data]
-        return inactivity_data
-
-    def simulate_activity_labels(self, inactivity_data, activity_data):
-        activity_labels = []
-        for inactivity_duration, activity_duration in zip(inactivity_data, activity_data):
-            if activity_duration > self.activity_threshold and (inactivity_duration / activity_duration) <= self.inactivity_threshold_ratio:
-                activity_labels.append("break needed")
-            else:
-                activity_labels.append("no break needed")
-        return activity_labels
-
-    def simulate_data(self, session_duration_minutes, max_interval_duration_minutes):
-        usage_data = self.simulate_usage_time(session_duration_minutes, max_interval_duration_minutes)
-        inactivity_data = self.simulate_inactivity(usage_data)
-        activity_labels = self.simulate_activity_labels(inactivity_data, usage_data)
-        return usage_data, inactivity_data, activity_labels
-
-# 使用类
-simulator = ActivitySimulator(inactivity_threshold_ratio=0.15, activity_threshold=30)
-usage_data, inactivity_data, activity_labels = simulator.simulate_data(60 * 8 * 60, 60)
-
-class BlinkStatistic:
-    def __init__(self, test_data):
-        self.blink_rate_data = test_data
-        self.average = 0 # instance variable of blink_rate_statistic
-        self.standard_deviation = 0
-
-    def get_average_blink_rate(self):
-        average_blink_rates = []
-        for i in range(len(self.blink_rate_data)):
-            total = 0
-            test_data_array = self.blink_rate_data[i]
-            length = len(test_data_array)
-            for w in range(length):
-                total += test_data_array[w]
-            average_blink_rates.append(total / length) 
-        return average_blink_rates
-
-    def get_stand_deviation_blink_rate(self):
-        average_blink_rates = self.get_average_blink_rate()
-        totals = []
-        for w in range(len(self.blink_rate_data)):
-            for i in range(len(self.blink_rate_data[w])):
-                totals.append(0)
-                totals[w] += (abs(average_blink_rates[w] - self.blink_rate_data[w][i])) * (abs(average_blink_rates[w] - self.blink_rate_data[w][i]))
-        standard_deviation_1 = totals[0] / (len(self.blink_rate_data[0]))
-        standard_deviation_2 = totals[1] / (len(self.blink_rate_data[1]))
-        return standard_deviation_1, standard_deviation_2
-
-# Example usage of the simulate_data function
-usage_data, inactivity_data, activity_labels = simulate_data(0.15, 30)
-my_obj = BlinkStatistic(test_data_all)
-print(my_obj)
-
-# ResNet50 和 U-Net 自己跑一个预训练
-# Convolution 这应该不止同一个东西
-# baseline还是face-mesh的那个去做就行了 都用得上就行
-# 估计脸部还是交给预训练的来做 其他就是基线测试
-
-"""
-If you think you can finish the milestone on time, and if not, explain why (e.g. student participation, bugs).
-What you guys added to the project since the last report.
-Any issues you are noticing in the student (e.g. not learning, behavioral problems)
-Some screenshots of what you guys have so far.
-"""
-
 
 
 # 12/22-12/23
@@ -1062,8 +1083,6 @@ Some screenshots of what you guys have so far.
 #   - Invoke Adobe PDF in order to get the reports sealed and transported
 #   - Embed the results into a website so that the web-end at the user can be applied
 #   - ...
-
-# HW
 
 
 
