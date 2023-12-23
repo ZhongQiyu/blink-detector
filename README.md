@@ -2,16 +2,21 @@
 
 **This is a mirror of the HS Project in CMA.**
 
-## Homework (12/18/2023; We would tackle them at the same time!):
-
-- Configure an external device to capture the video. This can be your phone or your tablet.
-- Share your myGUI Python file with me so that:
-    - We would be able to embed the CascadeClassifier and FaceMesh into the display.
-    - We will add a few more features for the purpose of tiresome reminders. Currently we have (1) camera (2) mouse (3) keyboard, and we would integrate the modals as far as we can.
-    - We can change the GUI layout while embedding everything in.
-- Run ai_introduction.py for getting around with the flexible AI parts:
-    - I will share the ai_introduction.py with you as a tutorial of the REAL machine learning in GitHub.
-    - The models we have used so far are all pre-trained, and this one would involve spaces of searching, etc.
+## Homework (12/23/2023; We would tackle them at the same time!):
+- In NEW System.py (rename it as if you are working on the final project!), implement:
+    - A better video-capture layout. Hint: Change the arrangement of the elements. What can it be? Refer to HTML-CSS5 APIs if you need to.
+    - A GUI feature that allows overlapping zones the real-time video capture in the background and the other statistics that we have had.
+    - An AI feature that traces the count of times where the eye(s) blink(s). Hint: How can we anchor the eyes? Refer to the OpenCV API if you want to.
+    - Combine this with your old System.py, and RENAME the files. When your time permits, refactor the names of the variables and the functions.
+- In the website that you shared with me, add a new demo for the project that you have when you finish the HWs above. I will save it to prepare for our final evaluation.
+- Run the command lines to install the Pyinstaller library. Try to wrap up your current version of code so that it (1) COMPILES and (2) RUNS.
+    - Tackle with Git when you iterate the versions. We are using the ```main``` branch, and if you want to have you own, feel free to create one. Send pull requests per your update.
+    - Share the version that you think would run smoothly in the two sessions to have.
+    - *Try to run with VS Code and PyCharm, and test the difference in terms of compilation time. Colab prevents the GUI parts to load, and it is the full-size compilers that helps us.
+- Final Compilation!
+    - In the working directory that you have on your computer, upload ALL the dependencies in a folder.
+    - Be aware of the naming of everything. Merge with whatever Marisabel has shared with you and use my GitHub repo to synchronize the progress.
+- Class Extension: we will talk about this while your patent is under review for approval.
 
 ## Issues:
 - ai_engine.py: what was this for?
