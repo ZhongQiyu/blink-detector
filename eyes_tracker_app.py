@@ -1,5 +1,6 @@
 import tkinter as tk
 from PIL import Image, ImageTk
+
 from eyes_tracker import EyeTracker
 
 class EyeTrackerAPP:

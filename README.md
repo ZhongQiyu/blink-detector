@@ -13,6 +13,10 @@
     - I will share the ai_introduction.py with you as a tutorial of the REAL machine learning in GitHub.
     - The models we have used so far are all pre-trained, and this one would involve spaces of searching, etc.
 
+## Issues:
+- ai_engine.py: what was this for?
+- Is there a way to find the connections between the hierarchy?
+
 ## Curriculum
 
 ### Module 1: AI Introduction
@@ -214,6 +218,8 @@ corresponding to the left eye. We then iterate through these indices and draw ci
 the frame. This will show only the landmarks of the left eye, effectively isolating it from the rest of the face
 landmarks.
 
+#### Show Right Eyes
+
 #### Eyes Blink Detector
 
 - process_image
@@ -232,7 +238,7 @@ landmarks.
 
 ### Module 3: Mouse and Keyboard Tracker
 
-#### Learn About pynput
+#### Learn about pynput
 
 - Monitoring the mouse
 A mouse listener is a threading.Thread, and all callbacks will be invoked from the thread.

@@ -4,6 +4,7 @@ from math import ceil
 from pynput import keyboard, mouse
 
 class Tracker:
+    
     def __init__(self):
         # Define a global variable to track the last activity time
         self.last_activity_time = time.time()

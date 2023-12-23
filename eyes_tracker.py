@@ -47,13 +47,27 @@ class EyeTracker:
         if not self.eye_blink_detector.is_face_detected:
             self.reset_values()
 
-    def break_prediction(self):
-        # Perform prediction for a break after a certain time
-        elapsed_time = time.time() - self.eye_blink_detector.start_time
-        one_hour_in_seconds = 3600
-        if elapsed_time >= one_hour_in_seconds:
-            self.prediction = predict([one_hour_in_seconds, self.tracker.inactive_time])
-            # print(f"Prediction in 1 hour: {self.prediction}")
+    def __init__(self):
+        self.frame_queue = queue.Queue()
+        self.eye_blink_detector = EyeBlinkDetector()
+        self.tracker = Tracker()
+        self.is_listening = False
+        self.is_running = True
+        self.show_message = False
+        threading.Thread(target=self.run_engine).start()
+
+    def reset_values(self):
+        self.is_listening = False
+        self.tracker.set_listening(option=False)
+        self.tracker = Tracker()
+        self.show_message = False
+
+    def process_image_thread(self, frame, frame_counter):
+        frame = self.eye_blink_detector.process_image(frame, frame_counter)
+        # Add any additional processing here
+        self.frame_queue.put(frame)
+        if not self.eye_blink_detector.is_face_detected:
+            self.reset_values()
 
     def run_engine(self):
         frame_counter = 0

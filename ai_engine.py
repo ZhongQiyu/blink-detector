@@ -56,6 +56,48 @@ def run_engine():
 
     cv2.destroyAllWindows()
     cap.release()
+
+import tkinter as tk
+import cv2
+from PIL import Image, ImageTk
+import threading
+
+class MyGui:
+    def __init__(self):
+        self.root = tk.Tk()
+        self.root.state('zoomed')
+        self.root.title("AI Timetracker")
+        self.root.resizable(True, True)
+
+        # ... 其他 Tkinter 部件 ...
+
+        # 添加一个 Canvas 用于显示视频流
+        self.video_canvas = tk.Canvas(self.root, width=640, height=480)
+        self.video_canvas.pack()
+
+        # 启动一个线程来处理视频流
+        threading.Thread(target=self.video_loop, daemon=True).start()
+
+        # ... 其他代码 ...
+
+    def video_loop(self):
+        cap = cv2.VideoCapture(0)
+        while True:
+            ret, frame = cap.read()
+            if ret:
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                self.photo = ImageTk.PhotoImage(image=Image.fromarray(frame))
+                self.video_canvas.create_image(0, 0, image=self.photo, anchor=tk.NW)
+            self.root.update()
+
+    # ... 其他函数 ...
+
+    def run(self):
+        self.root.mainloop()
+
+app = MyGui()
+app.run()
+
     
     # global start_time, start_time_blink, CEF_counter, total_blinks, text, tracker, is_listening, is_face_detected
     # frame_counter = 0

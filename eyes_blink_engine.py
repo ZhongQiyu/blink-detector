@@ -1,5 +1,3 @@
-# CS Screen Usage AI Project
-
 import math
 import time
 
