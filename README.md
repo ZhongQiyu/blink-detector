@@ -3,24 +3,29 @@
 **This is a mirror of the HS Project in CMA.**
 
 ## Homework (12/23/2023; We would tackle them at the same time!):
-- In NEW System.py (rename it as if you are working on the final project!), implement:
+- 0. In System.py, merge the contents with your NEW System.py. Basically, merge two files to be one. Do we need re-naming?
+- 1. Refactor our current working directory (hs_project). What files can be consolidated into one folder?
+- 2. In NEW System.py (rename it as if you are working on the final project!), implement:
     - A better video-capture layout. Hint: Change the arrangement of the elements. What can it be? Refer to HTML-CSS5 APIs if you need to.
     - A GUI feature that allows overlapping zones the real-time video capture in the background and the other statistics that we have had.
     - An AI feature that traces the count of times where the eye(s) blink(s). Hint: How can we anchor the eyes? Refer to the OpenCV API if you want to.
     - Combine this with your old System.py, and RENAME the files. When your time permits, refactor the names of the variables and the functions.
-- In the website that you shared with me, add a new demo for the project that you have when you finish the HWs above. I will save it to prepare for our final evaluation.
-- Run the command lines to install the Pyinstaller library. Try to wrap up your current version of code so that it (1) COMPILES and (2) RUNS.
+- 3. Run the command lines to install the Pyinstaller library. Try to wrap up your current version of code so that it (1) COMPILES and (2) RUNS.
     - Tackle with Git when you iterate the versions. We are using the ```main``` branch, and if you want to have you own, feel free to create one. Send pull requests per your update.
     - Share the version that you think would run smoothly in the two sessions to have.
     - *Try to run with VS Code and PyCharm, and test the difference in terms of compilation time. Colab prevents the GUI parts to load, and it is the full-size compilers that helps us.
-- Final Compilation!
+- 4. *Do a bit of research in sub-modules if needed. 
+- 5. In the website that you shared with me:
+    - If it is allowed, please share the source code with me.
+    - Add a new demo for the project that you have when you finish the HWs above. I will save it to prepare for our final evaluation.
+- 6. Final Compilation!
     - In the working directory that you have on your computer, upload ALL the dependencies in a folder.
     - Be aware of the naming of everything. Merge with whatever Marisabel has shared with you and use my GitHub repo to synchronize the progress.
-- Class Extension: we will talk about this while your patent is under review for approval.
+- 7. Class Extension: we will talk about this in the next session while your patent is under review for approval.
 
 ## Issues:
 - ai_engine.py: what was this for?
-- Is there a way to find the connections between the hierarchy?
+- Is there a way to merge Marisabel's repo with ours?
 
 ## Curriculum
 
