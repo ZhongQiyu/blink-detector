@@ -4,8 +4,10 @@
 
 ## Homework (12/23/2023; We would tackle them at the same time!):
 1. In System.py, merge the contents with your NEW System.py. Basically, merge two files to be one. Do we need re-naming?
-2. Refactor our current working directory (hs_project). What files can be consolidated into one folder?
-3. In NEW System.py (rename it as if you are working on the final project!), implement:
+2. Refactor our current working directory (hs_project).
+- What files can be deleted? Warning: Before ANY kinds of deletion, what would we better do?
+- What files can be consolidated into one folder? What about the ones to generate? Hint: Modularity sounds a good plan.
+5. In NEW System.py (rename it as if you are working on the final project!), implement:
 - A better video-capture layout. Hint: Change the arrangement of the elements. What can it be? Refer to HTML-CSS5 APIs if you need to.
 - A GUI feature that allows overlapping zones the real-time video capture in the background and the other statistics that we have had.
 - An AI feature that traces the count of times where the eye(s) blink(s). Hint: How can we anchor the eyes? Refer to the OpenCV API if you want to.
@@ -366,5 +368,7 @@ listener.start()
 
 ## References:
 
+- https://pynput.readthedocs.io/
+- https://docs.opencv.org/3.4/d6/d00/tutorial_py_root.html
 - https://github.com/google/mediapipe/wiki/MediaPipe-Face-Mesh
 - ...
