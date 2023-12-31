@@ -57,6 +57,9 @@ class EyeTrackingApp:
         blink_count_frame = tk.Frame(self.overlay_frame, bg='white')
         blink_count_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
 
+        self.blink_count = 0
+        self.EAR_THRESHOLD = 0.21
+        self.eye_closed = False
         self.total_blink_count = tk.Label(blink_count_frame, text="Total Blink Count: 0", font=("Arial", 20), fg='black', bg='white')
         self.total_blink_count.pack()
 
@@ -212,18 +215,71 @@ class EyeTrackingApp:
     def run_keyboard_listener(self):
         with KeyboardListener(on_press=self.on_press) as listener:
             listener.join()
+
+    """
+        Eye blink engine time!
+    """
+
+    def update_blink_count(self):
+        # Update the label with the new blink count
+        self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
+
+    def detect_eyes(self, frame):
+        # Convert the frame to RGB for MediaPipe processing
+        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        results = self.face_mesh.process(image)
+
+        # Check if any face landmarks were detected
+        if results.multi_face_landmarks:
+            for face_landmarks in results.multi_face_landmarks:
+                # Hypothetical indices for the landmarks of each eye.
+                # You need to replace these with the correct indices from MediaPipe
+                right_eye_indices = [33, 160, 158, 133, 153, 144]  # replace with the correct indices
+                left_eye_indices = [362, 385, 387, 263, 373, 380]
+
+                # Extract the landmark coordinates for each eye
+                right_eye = [face_landmarks.landmark[i] for i in right_eye_indices]
+                left_eye = [face_landmarks.landmark[i] for i in left_eye_indices]
+
+                # Calculate EAR for both eyes
+                left_ear = self.calculate_ear(left_eye)
+                right_ear = self.calculate_ear(right_eye)
+
+                # Average the EAR for both eyes for better stability
+                ear = (left_ear + right_ear) / 2.0
+
+                # Blink detection logic
+                if self.eye_closed and ear > self.EAR_THRESHOLD:
+                    self.blink_count += 1
+                    self.update_blink_count()
+                    self.eye_closed = False  # Reset the eye closed flag
+                elif not self.eye_closed and ear < self.EAR_THRESHOLD:
+                    self.eye_closed = True  # Set the eye closed flag
+
+                # Visualize the eye landmarks for debugging purposes
+                for idx in right_eye_indices + left_eye_indices:
+                    if idx < len(face_landmarks.landmark):
+                        point = face_landmarks.landmark[idx]
+                        x = int(point.x * frame.shape[1])
+                        y = int(point.y * frame.shape[0])
+                        cv2.circle(frame, (x, y), 1, (0, 255, 0), -1)
+
+        return frame
+
+
+    def calculate_ear(self, eye):
+        # EAR calculation with six points
+        P2_P6 = self.distance(eye[1], eye[5])
+        P3_P5 = self.distance(eye[2], eye[4])
+        P1_P4 = self.distance(eye[0], eye[3])
+        ear = (P2_P6 + P3_P5) / (2.0 * P1_P4)
+        return ear
+
+    def distance(self, p1, p2):
+        # Calculate the Euclidean distance between two points
+        x_diff = p2.x - p1.x
+        y_diff = p2.y - p1.y
+        return (x_diff**2 + y_diff**2)**0.5
     
 
 app = EyeTrackingApp("MediaPipe Eye Tracking with Tkinter")
-
-
-
-
-
-
-
-
-
-
-
-
