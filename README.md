@@ -2,35 +2,53 @@
 
 **This is a mirror of the HS Project in CMA.**
 
-## Homework (12/23/2023; We would tackle them at the same time!):
-1. In System.py, merge the contents with your NEW System.py. Basically, merge two files to be one. Do we need re-naming?
-2. Refactor our current working directory (hs_project).
-- What files can be deleted? Warning: Before ANY kinds of deletion, what would we better do?
-- What files can be consolidated into one folder? What about the ones to generate? Hint: Modularity sounds a good plan.
-5. In NEW System.py (rename it as if you are working on the final project!), implement:
-- A better video-capture layout. Hint: Change the arrangement of the elements. What can it be? Refer to HTML-CSS5 APIs if you need to.
-- A GUI feature that allows overlapping zones the real-time video capture in the background and the other statistics that we have had.
+## Homework (12/31/2023):
+
+0. We would tackle them at the same time! Treat the project as one of your vacation HW.
+
+1. Refactoring: In our current working directory (hs_project):
+(1) Merge System.py and allansystem.py. Which file can be deleted? Warning: Before ANY kinds of deletion, what would we better do?
+(2) Consolidate cascade.py, ocr.py, and main.py. Which files should go to which directory? Why?
+(3) Refer to the repository done by Marisabel. Which files are the ones we inherited? Which are not? Can they be consolidated into one folder? Hint: Modularity sounds a good plan.
+(4) Apply the same logic of (1)-(2)-(3) on the folders. Do not change them into submodules.
+
+2. Implementation:
 - An AI feature that traces the count of times where the eye(s) blink(s). Hint: How can we anchor the eyes? Refer to the OpenCV API if you want to.
-- Combine this with your old System.py, and RENAME the files. When your time permits, refactor the names of the variables and the functions.
-4. Run the command lines to install the Pyinstaller library. Try to wrap up your current version of code so that it (1) COMPILES and (2) RUNS.
+- A better video-capture layout in the GUI. Hint: Change the arrangement of the elements.
+   - Save space for the video display and detection. Is there a way to put the video in the center of the window?
+   - When we invoke the systematic features, we would be able to see the exact resolution of the displayed screen. However, it would be better to perform scaling and movement automatically when we change the window's size. Find the functions to do this. Hint: HTML-CSS5 APIs.
+   - *Overlap the statistics (what have we had so far?) with the WeChat window.
+- A script that connects your computer hardware to make the virtual camera work, in order to let our project proceeds for display in Zoom. Leave the original one for the main project.
+- The REFACTORED names of the variables and the functions.
+
+3. Synchronization:
+- I will start to pick up from your code EVERY DAY. Compile a bit when you are able to, since we are approaching the end of the project.
+- Run the command lines to install the Pyinstaller library. Try to wrap up your current version of code so that it (1) COMPILES and (2) RUNS.
 - Tackle with Git when you iterate the versions. We are using the ```main``` branch, and if you want to have you own, feel free to create one. Send pull requests per your update.
 - Share the version that you think would run smoothly in the two sessions to have.
 - *Try to run with VS Code and PyCharm, and test the difference in terms of compilation time. Colab prevents the GUI parts to load, and it is the full-size compilers that helps us.
-5. *Do a bit of research in sub-modules if needed. 
-6. In the website that you shared with me:
+
+4. Pro-tips:
+- When deletion of files happened, revert to the last-updated version. Save the directories often when you finish an iteration.
+- Do `git pull` then `git push ...` AS ALWAYS. This will eliminate at least 60% of the clashes.
+- Use the GitHub feature in either PyCharm or VS Code when you are in progress. It is better then plain-text because of the auto-configuration of the .iml files, etc.
+
+5. In the website that you shared with me:
 - If it is allowed, please share the source code with me.
 - Add a new demo for the project that you have when you finish the HWs above. I will save it to prepare for our final evaluation.
-7. Final Compilation!
+
+6. Final Compilation!
 - In the working directory that you have on your computer, upload ALL the dependencies in a folder.
-- Be aware of the naming of everything. Merge with whatever Marisabel has shared with you and use my GitHub repo to synchronize the progress.
-8. Class Extension:
-- We have had 22 sessions. How do you think for the sessions to have?
-- Do you think 2-3 classes can get the stuff done?
-- We will talk about this in the next session while your patent is under review for approval.
+- Again, be aware of the naming of everything. Merge with whatever Marisabel has shared with you and use my GitHub repo to synchronize the progress.
+
+7. Class Extension:
+- We have had 23 sessions. How do you think for the sessions to have? 
+- Remember we have deadlines for the school applications too. Do you think 1-2 more classes can get the stuff done?
+- We will talk about this in the next session (expected 1/5/24, Friday) while your patent is under review for approval.
 
 ## Issues:
-- ai_engine.py: what was this for?
-- Is there a way to merge Marisabel's repo with ours?
+- Raise concerns of the design in modularization (ai_engine.py).
+- Merge Marisabel's repo with ours?
 
 ## Curriculum
 
