@@ -20,9 +20,18 @@ class EyeTrackingApp:
         top_frame = tk.Frame(self.root, bg='white')
         top_frame.pack(side=tk.TOP, fill=tk.X)
 
+        # Center frame for show/hide statistics button and blink count
+        center_frame = tk.Frame(top_frame, bg='white')
+        center_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        self.toggle_stats_button = tk.Button(center_frame, text="Show/Hide Statistics", font=("Arial", 20), command=self.toggle_statistics)
+        self.toggle_stats_button.pack(pady=10)  # Padding for the button
+
         # Overlay frame for the left-aligned elements
         self.overlay_frame = tk.Frame(top_frame, bg='white', borderwidth=0, highlightthickness=0)
         self.overlay_frame.pack(side=tk.LEFT, fill=tk.Y, padx=10)
+
+        self.right_side_frame = tk.Frame(top_frame, bg='white')
+        self.right_side_frame.pack(side=tk.RIGHT, padx=10, fill=tk.Y)
 
         # Frame for the total time elapsed
         time_frame = tk.Frame(self.overlay_frame, bg='white')
@@ -48,32 +57,34 @@ class EyeTrackingApp:
         self.set_strictness_button.pack(pady=(0, 5))  # Reduced padding
 
         self.strictness_explanation = tk.Label(strictness_frame, text="Strictness means the maximum blink count per minute", font=("Arial", 15), fg='black', bg='white')
-        self.strictness_explanation.pack(pady=(5, 0))  # Reduced padding
+        self.strictness_explanation.pack() 
 
         self.warning_msg = tk.Label(strictness_frame, text="", font=("Arial", 15), fg='red', bg='white')
         self.warning_msg.pack()
 
         # Frame for total blink count
-        blink_count_frame = tk.Frame(self.overlay_frame, bg='white')
-        blink_count_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
+        self.blink_count_frame = tk.Frame(center_frame, bg='white')
+        self.blink_count_frame.pack(pady=10)
 
         self.blink_count = 0
         self.EAR_THRESHOLD = 0.21
         self.eye_closed = False
-        self.total_blink_count = tk.Label(blink_count_frame, text="Total Blink Count: 0", font=("Arial", 20), fg='black', bg='white')
+        self.total_blink_count = tk.Label(self.blink_count_frame, text="Total Blink Count: 0", font=("Arial", 20), fg='black', bg='white')
         self.total_blink_count.pack()
 
         # Right side frame for clicks and keystrokes
         right_side_frame = tk.Frame(top_frame, bg='white')
         right_side_frame.pack(side=tk.RIGHT, padx=10, fill=tk.Y)
 
+        # Total clicks label (Pack it inside right_side_frame)
         self.total_click_amount = 0
-        self.total_clicks = tk.Label(right_side_frame, text="Total Clicks: 0", font=("Arial", 20), fg='black', bg='white')
-        self.total_clicks.pack(side=tk.TOP, padx=10, fill='x')  # Added fill option
+        self.total_clicks = tk.Label(self.right_side_frame, text="Total Clicks: 0", font=("Arial", 20), fg='black', bg='white')
+        self.total_clicks.pack(side=tk.TOP, padx=10, fill='x')
 
+        # Total keystrokes label (Pack it inside right_side_frame)
         self.total_keystroke_count = 0
-        self.total_keystrokes_label = tk.Label(right_side_frame, text="Total Keystroke Count: 0", font=("Arial", 20), fg='black', bg='white')
-        self.total_keystrokes_label.pack(side=tk.TOP, padx=10, fill='x')  # Added fill option
+        self.total_keystrokes_label = tk.Label(self.right_side_frame, text="Total Keystroke Count: 0", font=("Arial", 20), fg='black', bg='white')
+        self.total_keystrokes_label.pack(side=tk.TOP, padx=10, fill='x')
 
 
         mouse_thread = threading.Thread(target=self.run_mouse_listener)
@@ -104,6 +115,21 @@ class EyeTrackingApp:
         self.total_time_elapsed.config(text=f"Total Time Elapsed: {self.total_time_count}")
         self.total_time_count += 1
         self.root.after(1000, self.change_total_time_count)
+
+    def toggle_statistics(self):
+        # Toggle the visibility of the statistics overlay and video size
+        if self.overlay_frame.winfo_ismapped() and self.right_side_frame.winfo_ismapped() and self.blink_count_frame.winfo_ismapped():
+            # Hide statistics and make video fullscreen
+            self.overlay_frame.pack_forget()
+            self.right_side_frame.pack_forget()  # Hide the right side frame
+            self.blink_count_frame.pack_forget()  # Hide the blink count frame
+            self.canvas_video.pack(fill="both", expand=True)
+        else:
+            # Show statistics and restore video size
+            self.overlay_frame.pack(side=tk.LEFT, fill=tk.Y, padx=10)
+            self.right_side_frame.pack(side=tk.RIGHT, padx=10, fill=tk.Y)  # Show the right side frame
+            self.blink_count_frame.pack(pady=10)  # Show the blink count frame
+            self.canvas_video.pack(fill="both", expand=True)
 
     def start_eye_tracking(self):
         # Directly start tracking without checking the button state
@@ -191,7 +217,7 @@ class EyeTrackingApp:
             else:
                 self.warning_msg.config(text="Invalid Input! Please enter a number between 0 and 75!")
         except ValueError:
-            self.warning_msg.config(text="Invalid Input! Please enter a number!")
+            self.warning_msg.config(text="Invalid Input! Please enter an integer!")
 
     def on_click(self, x, y, button, pressed):
         if pressed:
@@ -283,3 +309,6 @@ class EyeTrackingApp:
     
 
 app = EyeTrackingApp("MediaPipe Eye Tracking with Tkinter")
+
+
+
