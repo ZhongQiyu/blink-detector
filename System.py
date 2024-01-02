@@ -49,7 +49,6 @@ class EyeTrackingApp:
         self.strictness_value = tk.Label(strictness_frame, font=("Arial", 20), text="Strictness: 0", fg='black', bg='white')
         self.strictness_value.pack()
 
-
         self.strictness_textbox = tk.Text(strictness_frame, font=("Arial", 20), height=1, width=5)
         self.strictness_textbox.pack(pady=(0, 5))  # Reduced padding
 
@@ -71,6 +70,10 @@ class EyeTrackingApp:
         self.eye_closed = False
         self.total_blink_count = tk.Label(self.blink_count_frame, text="Total Blink Count: 0", font=("Arial", 20), fg='black', bg='white')
         self.total_blink_count.pack()
+
+        self.reset_countdown_label = tk.Label(self.blink_count_frame, text="Resets in 60 seconds", font=("Arial", 20), fg='black', bg='white')
+        self.reset_countdown_label.pack()
+        self.handle_reset_countdown()
 
         # Right side frame for clicks and keystrokes
         right_side_frame = tk.Frame(top_frame, bg='white')
@@ -116,26 +119,34 @@ class EyeTrackingApp:
         self.total_time_count += 1
         self.root.after(1000, self.change_total_time_count)
 
+    
     def toggle_statistics(self):
-        # Toggle the visibility of the statistics overlay and video size
         if self.overlay_frame.winfo_ismapped() and self.right_side_frame.winfo_ismapped() and self.blink_count_frame.winfo_ismapped():
-            # Hide statistics and make video fullscreen
             self.overlay_frame.pack_forget()
-            self.right_side_frame.pack_forget()  # Hide the right side frame
-            self.blink_count_frame.pack_forget()  # Hide the blink count frame
+            self.right_side_frame.pack_forget()
+            self.blink_count_frame.pack_forget()
             self.canvas_video.pack(fill="both", expand=True)
         else:
-            # Show statistics and restore video size
             self.overlay_frame.pack(side=tk.LEFT, fill=tk.Y, padx=10)
-            self.right_side_frame.pack(side=tk.RIGHT, padx=10, fill=tk.Y)  # Show the right side frame
-            self.blink_count_frame.pack(pady=10)  # Show the blink count frame
-            self.canvas_video.pack(fill="both", expand=True)
+            self.blink_count_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10)
+            self.right_side_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=10)
+            elf.canvas_video.pack(fill="both", expand=True)
 
     def start_eye_tracking(self):
         # Directly start tracking without checking the button state
         self.is_tracking = True
         self.overlay_frame.lift()
         self.canvas_video.configure(bg='black')
+    def handle_reset_countdown(self, countdown=60):
+        if countdown > 0:
+            self.reset_countdown_label.config(text=f"Resets in {countdown} seconds")
+            # Schedule the method to be called again after 1 second with the decremented countdown
+            self.root.after(1000, self.handle_reset_countdown, countdown - 1)
+        else:
+            # Reset the blink count and restart the countdown when it reaches 0
+            self.blink_count = 0
+            self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
+            self.handle_reset_countdown(60)  # Reset the countdown
 
     def clear_video_feed(self):
         self.canvas_video.delete("all")
