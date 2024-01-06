@@ -20,6 +20,9 @@ class EyeTrackingApp:
         top_frame = tk.Frame(self.root, bg='white')
         top_frame.pack(side=tk.TOP, fill=tk.X)
 
+        self.on_break = False
+        self.after_id = None  # Initialize a variable to store the after call ID
+
         # Center frame for show/hide statistics button and blink count
         center_frame = tk.Frame(top_frame, bg='white')
         center_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
@@ -46,7 +49,8 @@ class EyeTrackingApp:
         strictness_frame = tk.Frame(self.overlay_frame, bg='white')
         strictness_frame.pack(side=tk.TOP, fill=tk.X)
 
-        self.strictness_value = tk.Label(strictness_frame, font=("Arial", 20), text="Strictness: 0", fg='black', bg='white')
+        self.strictness = 10
+        self.strictness_value = tk.Label(strictness_frame, font=("Arial", 20), text='Strictness: ' + str(self.strictness), fg='black', bg='white')
         self.strictness_value.pack()
 
         self.strictness_textbox = tk.Text(strictness_frame, font=("Arial", 20), height=1, width=5)
@@ -74,6 +78,11 @@ class EyeTrackingApp:
         self.reset_countdown_label = tk.Label(self.blink_count_frame, text="Resets in 60 seconds", font=("Arial", 20), fg='black', bg='white')
         self.reset_countdown_label.pack()
         self.handle_reset_countdown()
+
+        
+        self.break_label = tk.Label(center_frame, text="Time for a break!", font=("Arial", 20), fg='red', bg='white')
+        self.break_label.pack(pady=10)
+        self.break_label.pack_forget()  # This hides the label 
 
         # Right side frame for clicks and keystrokes
         right_side_frame = tk.Frame(top_frame, bg='white')
@@ -119,7 +128,12 @@ class EyeTrackingApp:
         self.total_time_count += 1
         self.root.after(1000, self.change_total_time_count)
 
-    
+    def show_break_label(self):
+        self.break_label.pack()
+
+    def hide_break_label(self):
+        self.break_label.pack_forget()
+
     def toggle_statistics(self):
         if self.overlay_frame.winfo_ismapped() and self.right_side_frame.winfo_ismapped() and self.blink_count_frame.winfo_ismapped():
             self.overlay_frame.pack_forget()
@@ -130,7 +144,7 @@ class EyeTrackingApp:
             self.overlay_frame.pack(side=tk.LEFT, fill=tk.Y, padx=10)
             self.blink_count_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10)
             self.right_side_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=10)
-            elf.canvas_video.pack(fill="both", expand=True)
+            self.canvas_video.pack(fill="both", expand=True)
 
     def start_eye_tracking(self):
         # Directly start tracking without checking the button state
@@ -138,15 +152,34 @@ class EyeTrackingApp:
         self.overlay_frame.lift()
         self.canvas_video.configure(bg='black')
     def handle_reset_countdown(self, countdown=60):
-        if countdown > 0:
-            self.reset_countdown_label.config(text=f"Resets in {countdown} seconds")
-            # Schedule the method to be called again after 1 second with the decremented countdown
-            self.root.after(1000, self.handle_reset_countdown, countdown - 1)
+        if self.after_id:  # Check if there's an existing after call
+            self.root.after_cancel(self.after_id)  # Cancel the previous after call
+
+        if self.on_break:
+            if countdown > 0:
+                self.reset_countdown_label.config(text=f"Timer stopped, take a break! {countdown} seconds remaining")
+                # Store the identifier of the new after call
+                self.after_id = self.root.after(1000, self.handle_reset_countdown, countdown - 1)
+            else:
+                # When break time is over, reset everything
+                self.on_break = False
+                self.reset_countdown_label.config(text="Resets in 60 seconds")
+                self.hide_break_label()
+                self.blink_count = 0
+                self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
+                self.handle_reset_countdown()  # Start the normal countdown
         else:
-            # Reset the blink count and restart the countdown when it reaches 0
-            self.blink_count = 0
-            self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
-            self.handle_reset_countdown(60)  # Reset the countdown
+            if countdown > 0:
+                self.reset_countdown_label.config(text=f"Resets in {countdown} seconds")
+                # Store the identifier of the new after call
+                self.after_id = self.root.after(1000, self.handle_reset_countdown, countdown - 1)
+            else:
+                # Reset the blink count and restart the countdown when it reaches 0
+                self.blink_count = 0
+                self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
+                self.handle_reset_countdown()  # Reset the countdown
+
+
 
     def clear_video_feed(self):
         self.canvas_video.delete("all")
@@ -223,6 +256,7 @@ class EyeTrackingApp:
         try:
             intvalue = int(value)
             if 0 <= intvalue <= 75:
+                self.strictness = intvalue
                 self.strictness_value.config(text="Strictness: " + str(intvalue))
                 self.warning_msg.config(text="")
             else:
@@ -258,8 +292,28 @@ class EyeTrackingApp:
     """
 
     def update_blink_count(self):
-        # Update the label with the new blink count
-        self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
+        if not self.on_break:  # Only update blink count if not on a break
+
+            # Update the label with the new blink count
+            self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
+
+            if self.blink_count >= self.strictness:
+                self.show_break_label()
+            else:
+                self.hide_break_label()
+
+            # Check if the blink count has reached 10 and it's not already on a break
+            if self.blink_count >= 10:
+                self.initiate_break()
+
+    def initiate_break(self):
+        # Set the state to break and update the UI accordingly
+        self.on_break = True
+        self.show_break_label()
+        self.reset_countdown_label.config(text="Timer stopped, take a break!")  # Update the countdown label
+        self.handle_reset_countdown(30)  # Start a 30-second break countdown
+
+
 
     def detect_eyes(self, frame):
         # Convert the frame to RGB for MediaPipe processing
