@@ -1,5 +1,3 @@
-
-
 import time
 import threading
 import cv2
@@ -16,99 +14,83 @@ class EyeTrackingApp:
         self.root.title(window_title)
         self.root.configure(bg='white')
 
-        # Main top frame
-        top_frame = tk.Frame(self.root, bg='white')
-        top_frame.pack(side=tk.TOP, fill=tk.X)
-
         self.on_break = False
-        self.after_id = None  # Initialize a variable to store the after call ID
 
-        # Center frame for show/hide statistics button and blink count
-        center_frame = tk.Frame(top_frame, bg='white')
-        center_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-        self.toggle_stats_button = tk.Button(center_frame, text="Show/Hide Statistics", font=("Arial", 20), command=self.toggle_statistics)
-        self.toggle_stats_button.pack(pady=10)  # Padding for the button
+        # Main Frame split into two sections: left/middle for video and right for labels
+        main_frame = tk.Frame(self.root, bg='white')
+        main_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        # Overlay frame for the left-aligned elements
-        self.overlay_frame = tk.Frame(top_frame, bg='white', borderwidth=0, highlightthickness=0)
-        self.overlay_frame.pack(side=tk.LEFT, fill=tk.Y, padx=10)
+        # Left/Middle Section for video
+        video_frame = tk.Frame(main_frame, bg='black')  # Black background to distinguish the video area
+        video_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        self.right_side_frame = tk.Frame(top_frame, bg='white')
-        self.right_side_frame.pack(side=tk.RIGHT, padx=10, fill=tk.Y)
+        # Right Section for labels and controls
+        right_frame = tk.Frame(main_frame, bg='white')
+        right_frame.pack(side=tk.RIGHT, fill=tk.Y)
 
-        # Frame for the total time elapsed
-        time_frame = tk.Frame(self.overlay_frame, bg='white')
-        time_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
+        # Packing the video canvas into the left/middle section
+        self.canvas_video = tk.Canvas(video_frame, bg='white')
+        self.canvas_video.pack(fill="both", expand=True)
 
+        # Controls and labels in the right section
+        # Total time elapsed
         self.total_time_count = 0
+        time_frame = tk.Frame(right_frame, bg='white')
+        time_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
         self.total_time_elapsed = tk.Label(time_frame, text="Total Time Elapsed: 0", font=("Arial", 20), fg='black', bg='white')
         self.total_time_elapsed.pack()
         self.change_total_time_count()
 
-        # Frame for strictness controls
-        strictness_frame = tk.Frame(self.overlay_frame, bg='white')
-        strictness_frame.pack(side=tk.TOP, fill=tk.X)
-
+        # Strictness controls
         self.strictness = 10
+        strictness_frame = tk.Frame(right_frame, bg='white')
+        strictness_frame.pack(side=tk.TOP, fill=tk.X)
         self.strictness_value = tk.Label(strictness_frame, font=("Arial", 20), text='Strictness: ' + str(self.strictness), fg='black', bg='white')
         self.strictness_value.pack()
-
         self.strictness_textbox = tk.Text(strictness_frame, font=("Arial", 20), height=1, width=5)
-        self.strictness_textbox.pack(pady=(0, 5))  # Reduced padding
-
+        self.strictness_textbox.pack(pady=(0, 5))
         self.set_strictness_button = tk.Button(strictness_frame, text="Set Strictness", font=("Arial", 20), command=self.set_strictness)
-        self.set_strictness_button.pack(pady=(0, 5))  # Reduced padding
-
+        self.set_strictness_button.pack(pady=(0, 5))
         self.strictness_explanation = tk.Label(strictness_frame, text="Strictness means the maximum blink count per minute", font=("Arial", 15), fg='black', bg='white')
-        self.strictness_explanation.pack() 
-
+        self.strictness_explanation.pack()
         self.warning_msg = tk.Label(strictness_frame, text="", font=("Arial", 15), fg='red', bg='white')
         self.warning_msg.pack()
 
-        # Frame for total blink count
-        self.blink_count_frame = tk.Frame(center_frame, bg='white')
-        self.blink_count_frame.pack(pady=10)
-
+        # Total blink count
         self.blink_count = 0
         self.EAR_THRESHOLD = 0.21
         self.eye_closed = False
+        self.blink_count_frame = tk.Frame(right_frame, bg='white')
+        self.blink_count_frame.pack(side=tk.TOP, fill=tk.X)
         self.total_blink_count = tk.Label(self.blink_count_frame, text="Total Blink Count: 0", font=("Arial", 20), fg='black', bg='white')
         self.total_blink_count.pack()
-
         self.reset_countdown_label = tk.Label(self.blink_count_frame, text="Resets in 60 seconds", font=("Arial", 20), fg='black', bg='white')
         self.reset_countdown_label.pack()
-        self.handle_reset_countdown()
 
-        
-        self.break_label = tk.Label(center_frame, text="Time for a break!", font=("Arial", 20), fg='red', bg='white')
+        # Break label
+        self.break_label = tk.Label(right_frame, text="Time for a break!", font=("Arial", 20), fg='red', bg='white')
         self.break_label.pack(pady=10)
-        self.break_label.pack_forget()  # This hides the label 
+        self.break_label.pack_forget()
 
-        # Right side frame for clicks and keystrokes
-        right_side_frame = tk.Frame(top_frame, bg='white')
-        right_side_frame.pack(side=tk.RIGHT, padx=10, fill=tk.Y)
-
-        # Total clicks label (Pack it inside right_side_frame)
+        # Clicks and keystrokes
         self.total_click_amount = 0
-        self.total_clicks = tk.Label(self.right_side_frame, text="Total Clicks: 0", font=("Arial", 20), fg='black', bg='white')
-        self.total_clicks.pack(side=tk.TOP, padx=10, fill='x')
-
-        # Total keystrokes label (Pack it inside right_side_frame)
         self.total_keystroke_count = 0
-        self.total_keystrokes_label = tk.Label(self.right_side_frame, text="Total Keystroke Count: 0", font=("Arial", 20), fg='black', bg='white')
-        self.total_keystrokes_label.pack(side=tk.TOP, padx=10, fill='x')
+        clicks_frame = tk.Frame(right_frame, bg='white')
+        clicks_frame.pack(side=tk.TOP, fill=tk.X)
+        self.total_clicks = tk.Label(clicks_frame, text="Total Clicks: 0", font=("Arial", 20), fg='black', bg='white')
+        self.total_clicks.pack()
+        keystrokes_frame = tk.Frame(right_frame, bg='white')
+        keystrokes_frame.pack(side=tk.TOP, fill=tk.X)
+        self.total_keystrokes_label = tk.Label(keystrokes_frame, text="Total Keystroke Count: 0", font=("Arial", 20), fg='black', bg='white')
+        self.total_keystrokes_label.pack()
 
-
+        # Mouse and Keyboard Listeners
         mouse_thread = threading.Thread(target=self.run_mouse_listener)
         mouse_thread.daemon = True
         mouse_thread.start()
-
         keyboard_thread = threading.Thread(target=self.run_keyboard_listener)
         keyboard_thread.daemon = True
         keyboard_thread.start()
-
-        self.canvas_video = tk.Canvas(self.root, width=self.root.winfo_screenwidth(), height=self.root.winfo_screenheight(), bg='white')
-        self.canvas_video.pack(fill="both", expand=True)
 
         # Initialize attributes for video capture and face mesh
         self.mp_face_mesh = mp.solutions.face_mesh
@@ -120,7 +102,7 @@ class EyeTrackingApp:
 
         # Delay the start of video updates until after the mainloop has started
         self.root.after(100, self.start_updates)  # Wait 100ms to allow the window to initialize
-
+        self.handle_reset_countdown()
         self.root.mainloop()
 
     def change_total_time_count(self):
@@ -134,52 +116,34 @@ class EyeTrackingApp:
     def hide_break_label(self):
         self.break_label.pack_forget()
 
-    def toggle_statistics(self):
-        if self.overlay_frame.winfo_ismapped() and self.right_side_frame.winfo_ismapped() and self.blink_count_frame.winfo_ismapped():
-            self.overlay_frame.pack_forget()
-            self.right_side_frame.pack_forget()
-            self.blink_count_frame.pack_forget()
-            self.canvas_video.pack(fill="both", expand=True)
-        else:
-            self.overlay_frame.pack(side=tk.LEFT, fill=tk.Y, padx=10)
-            self.blink_count_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=10)
-            self.right_side_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=10)
-            self.canvas_video.pack(fill="both", expand=True)
-
     def start_eye_tracking(self):
         # Directly start tracking without checking the button state
         self.is_tracking = True
-        self.overlay_frame.lift()
         self.canvas_video.configure(bg='black')
+
     def handle_reset_countdown(self, countdown=60):
-        if self.after_id:  # Check if there's an existing after call
+        if hasattr(self, 'after_id'):  # Check if there's an existing after call
             self.root.after_cancel(self.after_id)  # Cancel the previous after call
 
         if self.on_break:
             if countdown > 0:
                 self.reset_countdown_label.config(text=f"Timer stopped, take a break! {countdown} seconds remaining")
-                # Store the identifier of the new after call
                 self.after_id = self.root.after(1000, self.handle_reset_countdown, countdown - 1)
             else:
-                # When break time is over, reset everything
                 self.on_break = False
                 self.reset_countdown_label.config(text="Resets in 60 seconds")
                 self.hide_break_label()
                 self.blink_count = 0
                 self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
-                self.handle_reset_countdown()  # Start the normal countdown
+                self.handle_reset_countdown()
         else:
             if countdown > 0:
                 self.reset_countdown_label.config(text=f"Resets in {countdown} seconds")
-                # Store the identifier of the new after call
                 self.after_id = self.root.after(1000, self.handle_reset_countdown, countdown - 1)
             else:
-                # Reset the blink count and restart the countdown when it reaches 0
                 self.blink_count = 0
                 self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
-                self.handle_reset_countdown()  # Reset the countdown
-
-
+                self.handle_reset_countdown()
 
     def clear_video_feed(self):
         self.canvas_video.delete("all")
@@ -204,10 +168,7 @@ class EyeTrackingApp:
             if canvas_width > 0 and canvas_height > 0:
                 frame = self.resize_with_aspect_ratio(frame, width=canvas_width, height=canvas_height)
                 if frame is not None:
-                    # Process the frame to detect eyes and draw landmarks
-                    frame = self.detect_eyes(frame)  # <-- Call detect_eyes here
-
-                    # Convert the frame to a format suitable for Tkinter
+                    frame = self.detect_eyes(frame)
                     self.photo = ImageTk.PhotoImage(image=Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)))
                     self.canvas_video.create_image((canvas_width - self.photo.width()) // 2, (canvas_height - self.photo.height()) // 2, image=self.photo, anchor=tk.NW)
         self.root.after(self.delay, self.update)
@@ -374,6 +335,3 @@ class EyeTrackingApp:
     
 
 app = EyeTrackingApp("MediaPipe Eye Tracking with Tkinter")
-
-
-
