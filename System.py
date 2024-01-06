@@ -303,7 +303,7 @@ class EyeTrackingApp:
                 self.hide_break_label()
 
             # Check if the blink count has reached 10 and it's not already on a break
-            if self.blink_count >= 10:
+            if self.blink_count >= self.strictness:
                 self.initiate_break()
 
     def initiate_break(self):
