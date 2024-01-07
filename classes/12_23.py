@@ -1120,6 +1120,7 @@ app = MyGUI()
 app.root.mainloop()
 """
 
+"""
 import tkinter as tk
 from PIL import Image, ImageTk
 import cv2
@@ -1197,6 +1198,7 @@ class MyGUI():
         self.root.destroy()
 
 app = MyGUI()
+"""
 
 
 
@@ -1205,7 +1207,7 @@ app = MyGUI()
 # Project Module 5: Complete Project Engine
 
 # - Data Visualization：matplotlib
-#   - Build dashboard-like logic to report the output of the model
+#   - Build dashboard-like logic to report the output of the ...
 #   - Use certain kinds of charts to show different kinds of analytics
 #   - ...
 
@@ -1221,7 +1223,53 @@ app = MyGUI()
 
 ###### YOUR CODE HERE ######
 
+import cv2
+import mediapipe as mp
+from pynput.keyboard import Controller
+from pynput.mouse import Controller as MouseController
 
+class EyeTracker:
+    def __init__(self):
+        self.keyboard = Controller()
+        self.mouse = MouseController()
+        self.mp_face_mesh = mp.solutions.face_mesh
+        self.face_mesh = self.mp_face_mesh.FaceMesh()
+
+    def detect_eyes(self):
+        cap = cv2.VideoCapture(0)  # 打开摄像头
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if not ret:
+                continue
+
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            results = self.face_mesh.process(frame_rgb)
+
+            if results.multi_face_landmarks:
+                for face_landmarks in results.multi_face_landmarks:
+                    # 在这里添加眼部检测的代码
+                    # 可以使用face_landmarks中的关键点来检测眼睛的位置
+                    # 根据检测结果来触发键盘和鼠标事件
+
+            cv2.imshow('Eye Tracker', frame)
+
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
+
+        cap.release()
+        cv2.destroyAllWindows()
+
+    def control_keyboard(self, key):
+        self.keyboard.press(key)
+        self.keyboard.release(key)
+
+    def control_mouse(self, x, y):
+        self.mouse.position = (x, y)
+
+# 在这里实例化EyeTracker类，并调用detect_eyes方法来开始眼部检测
+if __name__ == "__main__":
+    tracker = EyeTracker()
+    tracker.detect_eyes()
 
 # Project Module 6: The Tracker App
 
