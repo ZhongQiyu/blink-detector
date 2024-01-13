@@ -64,13 +64,14 @@ class EyeTrackingApp:
         self.blink_count_frame.pack(side=tk.TOP, fill=tk.X)
         self.total_blink_count = tk.Label(self.blink_count_frame, text="Total Blink Count: 0", font=("Arial", 20), fg='black', bg='white')
         self.total_blink_count.pack()
-        self.reset_countdown_label = tk.Label(self.blink_count_frame, text="Resets in 60 seconds", font=("Arial", 20), fg='black', bg='white')
-        self.reset_countdown_label.pack()
 
-        # Break label
         self.break_label = tk.Label(right_frame, text="Time for a break!", font=("Arial", 20), fg='red', bg='white')
         self.break_label.pack(pady=10)
         self.break_label.pack_forget()
+
+        # Spacer frame for visual separation
+        spacer_frame = tk.Frame(right_frame, height=20, bg='white')  # Adjust height for desired spacing
+        spacer_frame.pack(side=tk.TOP, fill=tk.X)
 
         # Clicks and keystrokes
         self.total_click_amount = 0
@@ -91,7 +92,7 @@ class EyeTrackingApp:
         self.total_inputs_label.pack()
 
         # Input Strictness controls
-        self.input_strictness = 10  # Default value
+        self.input_strictness = 50  # Default value
         input_strictness_frame = tk.Frame(right_frame, bg='white')
         input_strictness_frame.pack(side=tk.TOP, fill=tk.X)
         self.input_strictness_value = tk.Label(input_strictness_frame, font=("Arial", 20), text='Input Strictness: ' + str(self.input_strictness), fg='black', bg='white')
@@ -103,15 +104,15 @@ class EyeTrackingApp:
         self.input_strictness_warning_msg = tk.Label(input_strictness_frame, text="", font=("Arial", 15), fg='red', bg='white')
         self.input_strictness_warning_msg.pack()
 
+        # Move the reset countdown label to this position, making it the last element in the right_frame
+        self.reset_countdown_label = tk.Label(right_frame, text="Resets in 60 seconds", font=("Arial", 20), fg='black', bg='white')
+        self.reset_countdown_label.pack(side=tk.TOP, fill=tk.X)
 
-        # Mouse and Keyboard Listeners
-        mouse_thread = threading.Thread(target=self.run_mouse_listener)
-        mouse_thread.daemon = True
-        mouse_thread.start()
-        keyboard_thread = threading.Thread(target=self.run_keyboard_listener)
-        keyboard_thread.daemon = True
-        keyboard_thread.start()
-
+        # Add this line in the __init__ method
+        input_listener_thread = threading.Thread(target=self.run_input_listeners)
+        input_listener_thread.daemon = True
+        input_listener_thread.start()
+        
         # Initialize attributes for video capture and face mesh
         self.mp_face_mesh = mp.solutions.face_mesh
         self.face_mesh = self.mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
@@ -156,6 +157,20 @@ class EyeTrackingApp:
     def hide_break_label(self):
         self.break_label.pack_forget()
 
+    def run_input_listeners(self):
+        # Initialize and start the mouse listener
+        mouse_listener = MouseListener(on_click=self.on_click)
+        mouse_listener.start()
+
+        # Initialize and start the keyboard listener
+        keyboard_listener = KeyboardListener(on_press=self.on_press)
+        keyboard_listener.start()
+
+        # Keep the thread running
+        mouse_listener.join()
+        keyboard_listener.join()
+
+
     def start_eye_tracking(self):
         # Directly start tracking without checking the button state
         self.is_tracking = True
@@ -167,7 +182,7 @@ class EyeTrackingApp:
 
         if self.on_break:
             if countdown > 0:
-                self.reset_countdown_label.config(text=f"Timer stopped, take a break! {countdown} seconds remaining")
+                self.reset_countdown_label.config(text=f"Break time! {countdown} seconds remaining")
                 self.after_id = self.root.after(1000, self.handle_reset_countdown, countdown - 1)
             else:
                 self.on_break = False
