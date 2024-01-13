@@ -45,13 +45,13 @@ class EyeTrackingApp:
         self.strictness = 10
         strictness_frame = tk.Frame(right_frame, bg='white')
         strictness_frame.pack(side=tk.TOP, fill=tk.X)
-        self.strictness_value = tk.Label(strictness_frame, font=("Arial", 20), text='Strictness: ' + str(self.strictness), fg='black', bg='white')
+        self.strictness_value = tk.Label(strictness_frame, font=("Arial", 20), text='Blink Strictness: ' + str(self.strictness), fg='black', bg='white')
         self.strictness_value.pack()
         self.strictness_textbox = tk.Text(strictness_frame, font=("Arial", 20), height=1, width=5)
         self.strictness_textbox.pack(pady=(0, 5))
         self.set_strictness_button = tk.Button(strictness_frame, text="Set Strictness", font=("Arial", 20), command=self.set_strictness)
         self.set_strictness_button.pack(pady=(0, 5))
-        self.strictness_explanation = tk.Label(strictness_frame, text="Strictness means the maximum blink count per minute", font=("Arial", 15), fg='black', bg='white')
+        self.strictness_explanation = tk.Label(strictness_frame, text="Blink Strictness means the maximum blink count per minute", font=("Arial", 15), fg='black', bg='white')
         self.strictness_explanation.pack()
         self.warning_msg = tk.Label(strictness_frame, text="", font=("Arial", 15), fg='red', bg='white')
         self.warning_msg.pack()
@@ -84,6 +84,26 @@ class EyeTrackingApp:
         self.total_keystrokes_label = tk.Label(keystrokes_frame, text="Total Keystroke Count: 0", font=("Arial", 20), fg='black', bg='white')
         self.total_keystrokes_label.pack()
 
+        # Total inputs label
+        total_inputs_frame = tk.Frame(right_frame, bg='white')
+        total_inputs_frame.pack(side=tk.TOP, fill=tk.X)
+        self.total_inputs_label = tk.Label(total_inputs_frame, text="Total Inputs: 0", font=("Arial", 20), fg='black', bg='white')
+        self.total_inputs_label.pack()
+
+        # Input Strictness controls
+        self.input_strictness = 10  # Default value
+        input_strictness_frame = tk.Frame(right_frame, bg='white')
+        input_strictness_frame.pack(side=tk.TOP, fill=tk.X)
+        self.input_strictness_value = tk.Label(input_strictness_frame, font=("Arial", 20), text='Input Strictness: ' + str(self.input_strictness), fg='black', bg='white')
+        self.input_strictness_value.pack()
+        self.input_strictness_textbox = tk.Text(input_strictness_frame, font=("Arial", 20), height=1, width=5)
+        self.input_strictness_textbox.pack(pady=(0, 5))
+        self.set_input_strictness_button = tk.Button(input_strictness_frame, text="Set Input Strictness", font=("Arial", 20), command=self.set_input_strictness)
+        self.set_input_strictness_button.pack(pady=(0, 5))
+        self.input_strictness_warning_msg = tk.Label(input_strictness_frame, text="", font=("Arial", 15), fg='red', bg='white')
+        self.input_strictness_warning_msg.pack()
+
+
         # Mouse and Keyboard Listeners
         mouse_thread = threading.Thread(target=self.run_mouse_listener)
         mouse_thread.daemon = True
@@ -104,11 +124,31 @@ class EyeTrackingApp:
         self.root.after(100, self.start_updates)  # Wait 100ms to allow the window to initialize
         self.handle_reset_countdown()
         self.root.mainloop()
+    def set_input_strictness(self):
+        value = self.input_strictness_textbox.get("1.0", "end").strip()
+        try:
+            intvalue = int(value)
+            if 0 <= intvalue <= 500:
+                self.input_strictness = intvalue
+                self.input_strictness_value.config(text="Input Strictness: " + str(intvalue))
+                self.input_strictness_warning_msg.config(text="")
+            else:
+                self.input_strictness_warning_msg.config(text="Invalid Input! Please enter a number between 0 and 500!")
+        except ValueError:
+            self.input_strictness_warning_msg.config(text="Invalid Input! Please enter an integer!")
+
+
 
     def change_total_time_count(self):
         self.total_time_elapsed.config(text=f"Total Time Elapsed: {self.total_time_count}")
         self.total_time_count += 1
         self.root.after(1000, self.change_total_time_count)
+    def update_total_inputs_label(self):
+        total_inputs = self.total_click_amount + self.total_keystroke_count
+        self.total_inputs_label.config(text=f"Total Inputs: {total_inputs}")
+        if total_inputs >= self.input_strictness and not self.on_break:
+            self.initiate_break()
+
 
     def show_break_label(self):
         self.break_label.pack()
@@ -133,9 +173,15 @@ class EyeTrackingApp:
                 self.on_break = False
                 self.reset_countdown_label.config(text="Resets in 60 seconds")
                 self.hide_break_label()
+                # Reset the counts after the break is over
                 self.blink_count = 0
                 self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
-                self.handle_reset_countdown()
+                self.total_click_amount = 0
+                self.total_keystroke_count = 0
+                self.update_click_count()
+                self.update_keystroke_count()
+                self.update_total_inputs_label()
+                self.handle_reset_countdown()  # Restart the countdown
         else:
             if countdown > 0:
                 self.reset_countdown_label.config(text=f"Resets in {countdown} seconds")
@@ -143,7 +189,9 @@ class EyeTrackingApp:
             else:
                 self.blink_count = 0
                 self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
-                self.handle_reset_countdown()
+                self.handle_reset_countdown()  # Restart the countdown
+
+    
 
     def clear_video_feed(self):
         self.canvas_video.delete("all")
@@ -218,7 +266,7 @@ class EyeTrackingApp:
             intvalue = int(value)
             if 0 <= intvalue <= 75:
                 self.strictness = intvalue
-                self.strictness_value.config(text="Strictness: " + str(intvalue))
+                self.strictness_value.config(text=" Blink Strictness: " + str(intvalue))
                 self.warning_msg.config(text="")
             else:
                 self.warning_msg.config(text="Invalid Input! Please enter a number between 0 and 75!")
@@ -226,16 +274,21 @@ class EyeTrackingApp:
             self.warning_msg.config(text="Invalid Input! Please enter an integer!")
 
     def on_click(self, x, y, button, pressed):
-        if pressed:
+        if pressed and not self.on_break:
             self.total_click_amount += 1
             self.update_click_count()
+            self.update_total_inputs_label()
+
+    def on_press(self, key):
+        if not self.on_break:
+            self.total_keystroke_count += 1
+            self.update_keystroke_count()
+            self.update_total_inputs_label()
+
 
     def update_click_count(self):
         self.total_clicks.config(text="Total Clicks: " + str(self.total_click_amount))
-
-    def on_press(self, key):
-        self.total_keystroke_count += 1
-        self.update_keystroke_count()
+        self.update_total_inputs_label()
 
     def update_keystroke_count(self):
         self.total_keystrokes_label.config(text="Total Keystroke Count: " + str(self.total_keystroke_count))
@@ -274,7 +327,12 @@ class EyeTrackingApp:
         self.reset_countdown_label.config(text="Timer stopped, take a break!")  # Update the countdown label
         self.handle_reset_countdown(30)  # Start a 30-second break countdown
 
-
+        # Reset input counts
+        self.total_click_amount = 0
+        self.total_keystroke_count = 0
+        self.update_click_count()
+        self.update_keystroke_count()
+        self.update_total_inputs_label()
 
     def detect_eyes(self, frame):
         # Convert the frame to RGB for MediaPipe processing
@@ -288,6 +346,13 @@ class EyeTrackingApp:
                 # You need to replace these with the correct indices from MediaPipe
                 right_eye_indices = [33, 160, 158, 133, 153, 144]  # replace with the correct indices
                 left_eye_indices = [362, 385, 387, 263, 373, 380]
+
+                # Left eye indices list
+                """
+                LEFT_EYE =[ 362, 382, 381, 380, 374, 373, 390, 249, 263, 466, 388, 387, 386, 385,384, 398 ]
+                # Right eye indices list
+                RIGHT_EYE=[ 33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161 , 246 ]
+                """
 
                 # Extract the landmark coordinates for each eye
                 right_eye = [face_landmarks.landmark[i] for i in right_eye_indices]
