@@ -6,6 +6,8 @@ import tkinter as tk
 from PIL import Image, ImageTk
 from pynput.mouse import Listener as MouseListener
 from pynput.keyboard import Listener as KeyboardListener, Key
+from tkinter import ttk
+
 
 class EyeTrackingApp:
     def __init__(self, window_title):
@@ -32,24 +34,27 @@ class EyeTrackingApp:
         self.canvas_video = tk.Canvas(video_frame, bg='white')
         self.canvas_video.pack(fill="both", expand=True)
 
-        # Controls and labels in the right section
         # Total time elapsed
         self.total_time_count = 0
         time_frame = tk.Frame(right_frame, bg='white')
         time_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
-        self.total_time_elapsed = tk.Label(time_frame, text="Total Time Elapsed: 0", font=("Arial", 20), fg='black', bg='white')
+        self.total_time_elapsed = tk.Label(time_frame, text="Total Time Elapsed: 0", font=("Segoe UI", 20), fg='black', bg='white')
         self.total_time_elapsed.pack()
         self.change_total_time_count()
+
+        button_style = ttk.Style()
+        button_style.configure('Big.TButton', font=('Segoe UI', 14))  # Change font and size as needed
+
 
         # Strictness controls
         self.strictness = 10
         strictness_frame = tk.Frame(right_frame, bg='white')
         strictness_frame.pack(side=tk.TOP, fill=tk.X)
-        self.strictness_value = tk.Label(strictness_frame, font=("Arial", 20), text='Blink Strictness: ' + str(self.strictness), fg='black', bg='white')
+        self.strictness_value = tk.Label(strictness_frame, font=("Segoe UI", 20), text='Blink Strictness: ' + str(self.strictness), fg='black', bg='white')
         self.strictness_value.pack()
-        self.strictness_textbox = tk.Text(strictness_frame, font=("Arial", 20), height=1, width=5)
+        self.strictness_textbox = tk.Text(strictness_frame, font=("Segoe UI", 20), height=1, width=5)
         self.strictness_textbox.pack(pady=(0, 5))
-        self.set_strictness_button = tk.Button(strictness_frame, text="Set Strictness", font=("Arial", 20), command=self.set_strictness)
+        self.set_strictness_button = ttk.Button(strictness_frame, text="Set Strictness", style='Big.TButton', command=self.set_strictness)
         self.set_strictness_button.pack(pady=(0, 5))
         self.strictness_explanation = tk.Label(strictness_frame, text="Blink Strictness means the maximum blink count per minute", font=("Arial", 15), fg='black', bg='white')
         self.strictness_explanation.pack()
@@ -62,53 +67,52 @@ class EyeTrackingApp:
         self.eye_closed = False
         self.blink_count_frame = tk.Frame(right_frame, bg='white')
         self.blink_count_frame.pack(side=tk.TOP, fill=tk.X)
-        self.total_blink_count = tk.Label(self.blink_count_frame, text="Total Blink Count: 0", font=("Arial", 20), fg='black', bg='white')
+        self.total_blink_count = tk.Label(self.blink_count_frame, text="Total Blink Count: 0", font=("Segoe UI", 20), fg='black', bg='white')
         self.total_blink_count.pack()
 
-        self.break_label = tk.Label(right_frame, text="Time for a break!", font=("Arial", 20), fg='red', bg='white')
+        # Break label
+        self.break_label = tk.Label(right_frame, text="Time for a break!", font=("Segoe UI", 20), fg='red', bg='white')
         self.break_label.pack(pady=10)
         self.break_label.pack_forget()
 
-        # Spacer frame for visual separation
-        spacer_frame = tk.Frame(right_frame, height=20, bg='white')  # Adjust height for desired spacing
+        # Spacer frame
+        spacer_frame = tk.Frame(right_frame, height=20, bg='white')
         spacer_frame.pack(side=tk.TOP, fill=tk.X)
 
-        # Clicks and keystrokes
+
         self.total_click_amount = 0
         self.total_keystroke_count = 0
         clicks_frame = tk.Frame(right_frame, bg='white')
         clicks_frame.pack(side=tk.TOP, fill=tk.X)
-        self.total_clicks = tk.Label(clicks_frame, text="Total Clicks: 0", font=("Arial", 20), fg='black', bg='white')
+        self.total_clicks = tk.Label(clicks_frame, text="Total Clicks: 0", font=("Segoe UI", 20), fg='black', bg='white')
         self.total_clicks.pack()
         keystrokes_frame = tk.Frame(right_frame, bg='white')
         keystrokes_frame.pack(side=tk.TOP, fill=tk.X)
-        self.total_keystrokes_label = tk.Label(keystrokes_frame, text="Total Keystroke Count: 0", font=("Arial", 20), fg='black', bg='white')
+        self.total_keystrokes_label = tk.Label(keystrokes_frame, text="Total Keystroke Count: 0", font=("Segoe UI", 20), fg='black', bg='white')
         self.total_keystrokes_label.pack()
 
-        # Total inputs label
         total_inputs_frame = tk.Frame(right_frame, bg='white')
         total_inputs_frame.pack(side=tk.TOP, fill=tk.X)
-        self.total_inputs_label = tk.Label(total_inputs_frame, text="Total Inputs: 0", font=("Arial", 20), fg='black', bg='white')
+        self.total_inputs_label = tk.Label(total_inputs_frame, text="Total Inputs: 0", font=("Segoe UI", 20), fg='black', bg='white')
         self.total_inputs_label.pack()
 
-        # Input Strictness controls
-        self.input_strictness = 50  # Default value
+        self.input_strictness = 50
         input_strictness_frame = tk.Frame(right_frame, bg='white')
         input_strictness_frame.pack(side=tk.TOP, fill=tk.X)
-        self.input_strictness_value = tk.Label(input_strictness_frame, font=("Arial", 20), text='Input Strictness: ' + str(self.input_strictness), fg='black', bg='white')
+        self.input_strictness_value = tk.Label(input_strictness_frame, font=("Segoe UI", 20), text='Input Strictness: ' + str(self.input_strictness), fg='black', bg='white')
         self.input_strictness_value.pack()
-        self.input_strictness_textbox = tk.Text(input_strictness_frame, font=("Arial", 20), height=1, width=5)
+        self.input_strictness_textbox = tk.Text(input_strictness_frame, font=("Segoe UI", 20), height=1, width=5)
         self.input_strictness_textbox.pack(pady=(0, 5))
-        self.set_input_strictness_button = tk.Button(input_strictness_frame, text="Set Input Strictness", font=("Arial", 20), command=self.set_input_strictness)
+        self.set_input_strictness_button = ttk.Button(input_strictness_frame, text="Set Input Strictness", style='Big.TButton', command=self.set_input_strictness)
         self.set_input_strictness_button.pack(pady=(0, 5))
         self.input_strictness_warning_msg = tk.Label(input_strictness_frame, text="", font=("Arial", 15), fg='red', bg='white')
         self.input_strictness_warning_msg.pack()
 
         # Move the reset countdown label to this position, making it the last element in the right_frame
-        self.reset_countdown_label = tk.Label(right_frame, text="Resets in 60 seconds", font=("Arial", 20), fg='black', bg='white')
+        self.reset_countdown_label = tk.Label(right_frame, text="Resets in 60 seconds", font=("Segoe UI", 20), fg='black', bg='white')
         self.reset_countdown_label.pack(side=tk.TOP, fill=tk.X)
 
-        # Add this line in the __init__ method
+        # Add this line i  n the __init__ method
         input_listener_thread = threading.Thread(target=self.run_input_listeners)
         input_listener_thread.daemon = True
         input_listener_thread.start()
