@@ -50,16 +50,19 @@ class EyeTrackingApp:
         self.strictness = 10
         strictness_frame = tk.Frame(right_frame, bg='white')
         strictness_frame.pack(side=tk.TOP, fill=tk.X)
+        strictness_frame.columnconfigure(0, weight=1)  # Configuring column 0 to have equal weight
+        strictness_frame.columnconfigure(1, weight=1)  # Configuring column 1 to have equal weight
+
         self.strictness_value = tk.Label(strictness_frame, font=("Segoe UI", 20), text='Blink Strictness: ' + str(self.strictness), fg='black', bg='white')
-        self.strictness_value.pack()
+        self.strictness_value.grid(row=0, columnspan=2)
         self.strictness_textbox = tk.Text(strictness_frame, font=("Segoe UI", 20), height=1, width=5)
-        self.strictness_textbox.pack(pady=(0, 5))
+        self.strictness_textbox.grid(row=1, column=0, pady=(0, 5), padx=5, sticky="ew")  # Apply sticky="ew"
         self.set_strictness_button = ttk.Button(strictness_frame, text="Set Strictness", style='Big.TButton', command=self.set_strictness)
-        self.set_strictness_button.pack(pady=(0, 5))
+        self.set_strictness_button.grid(row=1, column=1, pady=(0, 5), padx=5, sticky="ew")  # Apply sticky="ew"
         self.strictness_explanation = tk.Label(strictness_frame, text="Blink Strictness means the maximum blink count per minute", font=("Arial", 15), fg='black', bg='white')
-        self.strictness_explanation.pack()
+        self.strictness_explanation.grid(row=3, columnspan=2)
         self.warning_msg = tk.Label(strictness_frame, text="", font=("Arial", 15), fg='red', bg='white')
-        self.warning_msg.pack()
+        self.warning_msg.grid(row=2, columnspan=2)
 
         # Total blink count
         self.blink_count = 0
@@ -96,17 +99,21 @@ class EyeTrackingApp:
         self.total_inputs_label = tk.Label(total_inputs_frame, text="Total Inputs: 0", font=("Segoe UI", 20), fg='black', bg='white')
         self.total_inputs_label.pack()
 
+        # Input strictness controls
         self.input_strictness = 50
         input_strictness_frame = tk.Frame(right_frame, bg='white')
         input_strictness_frame.pack(side=tk.TOP, fill=tk.X)
+        input_strictness_frame.columnconfigure(0, weight=1)  # Configuring column 0 to have equal weight
+        input_strictness_frame.columnconfigure(1, weight=1)  # Configuring column 1 to have equal weight
+
         self.input_strictness_value = tk.Label(input_strictness_frame, font=("Segoe UI", 20), text='Input Strictness: ' + str(self.input_strictness), fg='black', bg='white')
-        self.input_strictness_value.pack()
+        self.input_strictness_value.grid(row=0, columnspan=2)
         self.input_strictness_textbox = tk.Text(input_strictness_frame, font=("Segoe UI", 20), height=1, width=5)
-        self.input_strictness_textbox.pack(pady=(0, 5))
+        self.input_strictness_textbox.grid(row=1, column=0, pady=(0, 5), padx=5, sticky="ew")  # Added sticky="ew" for equal width distribution
         self.set_input_strictness_button = ttk.Button(input_strictness_frame, text="Set Input Strictness", style='Big.TButton', command=self.set_input_strictness)
-        self.set_input_strictness_button.pack(pady=(0, 5))
+        self.set_input_strictness_button.grid(row=1, column=1, pady=(0, 5), padx=5, sticky="ew")  # Added sticky="ew" for equal width distribution
         self.input_strictness_warning_msg = tk.Label(input_strictness_frame, text="", font=("Arial", 15), fg='red', bg='white')
-        self.input_strictness_warning_msg.pack()
+        self.input_strictness_warning_msg.grid(row=2, columnspan=2)
 
         # Move the reset countdown label to this position, making it the last element in the right_frame
         self.reset_countdown_label = tk.Label(right_frame, text="Resets in 60 seconds", font=("Segoe UI", 20), fg='black', bg='white')
@@ -142,12 +149,21 @@ class EyeTrackingApp:
         except ValueError:
             self.input_strictness_warning_msg.config(text="Invalid Input! Please enter an integer!")
 
-
+    def reset_counters(self):
+        # Reset all the counters and update their respective labels
+        self.blink_count = 0
+        self.total_blink_count.config(text="Total Blink Count: 0")
+        self.total_click_amount = 0
+        self.total_keystroke_count = 0
+        self.update_click_count()
+        self.update_keystroke_count()
+        self.update_total_inputs_label()
 
     def change_total_time_count(self):
         self.total_time_elapsed.config(text=f"Total Time Elapsed: {self.total_time_count}")
         self.total_time_count += 1
         self.root.after(1000, self.change_total_time_count)
+
     def update_total_inputs_label(self):
         total_inputs = self.total_click_amount + self.total_keystroke_count
         self.total_inputs_label.config(text=f"Total Inputs: {total_inputs}")
@@ -192,23 +208,16 @@ class EyeTrackingApp:
                 self.on_break = False
                 self.reset_countdown_label.config(text="Resets in 60 seconds")
                 self.hide_break_label()
-                # Reset the counts after the break is over
-                self.blink_count = 0
-                self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
-                self.total_click_amount = 0
-                self.total_keystroke_count = 0
-                self.update_click_count()
-                self.update_keystroke_count()
-                self.update_total_inputs_label()
+                self.reset_counters()  # Call the method to reset the counters
                 self.handle_reset_countdown()  # Restart the countdown
         else:
             if countdown > 0:
                 self.reset_countdown_label.config(text=f"Resets in {countdown} seconds")
                 self.after_id = self.root.after(1000, self.handle_reset_countdown, countdown - 1)
             else:
-                self.blink_count = 0
-                self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
+                self.reset_counters()  # Call the method to reset the counters
                 self.handle_reset_countdown()  # Restart the countdown
+
 
     
 
