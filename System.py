@@ -14,116 +14,126 @@ class EyeTrackingApp:
         self.root = tk.Tk()
         self.root.state('zoomed')
         self.root.title(window_title)
-        self.root.configure(bg='white')
+        self.root.configure(bg='#404040')
 
         self.on_break = False
 
-        # Main Frame split into two sections: left/middle for video and right for labels
-        main_frame = tk.Frame(self.root, bg='white')
+        # Create a style object
+        style = ttk.Style()
+        style.theme_use('clam')  # Use the 'clam' theme as a base for customization
+
+        # Configure style for Button
+        style.configure('Custom.TButton', 
+                        background='#404040', 
+                        foreground='white', 
+                        bordercolor='white', 
+                        borderwidth=2,
+                        font=('Segoe UI', 14))
+
+        # Configure style for Text
+        text_bg = '#404040'  # Dark grey background for text
+        text_fg = 'white'    # White text color
+
+        # Main Frame
+        main_frame = tk.Frame(self.root, bg='#404040')
         main_frame.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
-        # Left/Middle Section for video
-        video_frame = tk.Frame(main_frame, bg='black')  # Black background to distinguish the video area
+        # Video Frame
+        video_frame = tk.Frame(main_frame, bg='#404040')
         video_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        # Right Section for labels and controls
-        right_frame = tk.Frame(main_frame, bg='white')
+        # Right Section Frame
+        right_frame = tk.Frame(main_frame, bg='#404040')
         right_frame.pack(side=tk.RIGHT, fill=tk.Y)
 
-        # Packing the video canvas into the left/middle section
-        self.canvas_video = tk.Canvas(video_frame, bg='white')
+        self.canvas_video = tk.Canvas(video_frame, bg='#404040')
         self.canvas_video.pack(fill="both", expand=True)
 
-        # Total time elapsed
+        # Time Elapsed Frame
         self.total_time_count = 0
-        time_frame = tk.Frame(right_frame, bg='white')
+        time_frame = tk.Frame(right_frame, bg='#404040')
         time_frame.pack(side=tk.TOP, fill=tk.X, pady=5)
-        self.total_time_elapsed = tk.Label(time_frame, text="Total Time Elapsed: 0", font=("Segoe UI", 20), fg='black', bg='white')
+        self.total_time_elapsed = tk.Label(time_frame, text="Total Time Elapsed: 0", font=("Segoe UI", 20), fg='white', bg='#404040')
         self.total_time_elapsed.pack()
         self.change_total_time_count()
 
-        button_style = ttk.Style()
-        button_style.configure('Big.TButton', font=('Segoe UI', 14))  # Change font and size as needed
-
-
-        # Strictness controls
+        # Strictness Frame
         self.strictness = 10
-        strictness_frame = tk.Frame(right_frame, bg='white')
+        strictness_frame = tk.Frame(right_frame, bg='#404040')
         strictness_frame.pack(side=tk.TOP, fill=tk.X)
-        strictness_frame.columnconfigure(0, weight=1)  # Configuring column 0 to have equal weight
-        strictness_frame.columnconfigure(1, weight=1)  # Configuring column 1 to have equal weight
-
-        self.strictness_value = tk.Label(strictness_frame, font=("Segoe UI", 20), text='Blink Strictness: ' + str(self.strictness), fg='black', bg='white')
+        strictness_frame.columnconfigure(0, weight=1)
+        strictness_frame.columnconfigure(1, weight=1)
+        self.strictness_value = tk.Label(strictness_frame, font=("Segoe UI", 20), text='Blink Strictness: ' + str(self.strictness), fg='white', bg='#404040')
         self.strictness_value.grid(row=0, columnspan=2)
-        self.strictness_textbox = tk.Text(strictness_frame, font=("Segoe UI", 20), height=1, width=5)
-        self.strictness_textbox.grid(row=1, column=0, pady=(0, 5), padx=5, sticky="ew")  # Apply sticky="ew"
-        self.set_strictness_button = ttk.Button(strictness_frame, text="Set Strictness", style='Big.TButton', command=self.set_strictness)
-        self.set_strictness_button.grid(row=1, column=1, pady=(0, 5), padx=5, sticky="ew")  # Apply sticky="ew"
-        self.strictness_explanation = tk.Label(strictness_frame, text="Blink Strictness means the maximum blink count per minute", font=("Arial", 15), fg='black', bg='white')
+        self.strictness_textbox = tk.Text(strictness_frame, font=("Segoe UI", 20), height=1, width=5, bg=text_bg, fg=text_fg)
+        self.strictness_textbox.grid(row=1, column=0, pady=(0, 5), padx=5, sticky="ew")
+        self.set_strictness_button = ttk.Button(strictness_frame, text="Set Strictness", style='Custom.TButton', command=self.set_strictness)
+        self.set_strictness_button.grid(row=1, column=1, pady=(0, 5), padx=5, sticky="ew")
+        self.strictness_explanation = tk.Label(strictness_frame, text="Blink Strictness means the maximum blink count per minute", font=("Arial", 15), fg='white', bg='#404040')
         self.strictness_explanation.grid(row=3, columnspan=2)
-        self.warning_msg = tk.Label(strictness_frame, text="", font=("Arial", 15), fg='red', bg='white')
+        self.warning_msg = tk.Label(strictness_frame, text="", font=("Arial", 15), fg='red', bg='#404040')
         self.warning_msg.grid(row=2, columnspan=2)
 
-        # Total blink count
+        # Blink Count Frame
         self.blink_count = 0
         self.EAR_THRESHOLD = 0.21
         self.eye_closed = False
-        self.blink_count_frame = tk.Frame(right_frame, bg='white')
+        self.blink_count_frame = tk.Frame(right_frame, bg='#404040')
         self.blink_count_frame.pack(side=tk.TOP, fill=tk.X)
-        self.total_blink_count = tk.Label(self.blink_count_frame, text="Total Blink Count: 0", font=("Segoe UI", 20), fg='black', bg='white')
+        self.total_blink_count = tk.Label(self.blink_count_frame, text="Total Blink Count: 0", font=("Segoe UI", 20), fg='white', bg='#404040')
         self.total_blink_count.pack()
 
-        # Break label
-        self.break_label = tk.Label(right_frame, text="Time for a break!", font=("Segoe UI", 20), fg='red', bg='white')
+        # Break Label
+        self.break_label = tk.Label(right_frame, text="Time for a break!", font=("Segoe UI", 20), fg='red', bg='#404040')
         self.break_label.pack(pady=10)
         self.break_label.pack_forget()
 
-        # Spacer frame
-        spacer_frame = tk.Frame(right_frame, height=20, bg='white')
+        # Spacer Frame
+        spacer_frame = tk.Frame(right_frame, height=20, bg='#404040')
         spacer_frame.pack(side=tk.TOP, fill=tk.X)
 
-
+        # Clicks and Keystrokes Frame
         self.total_click_amount = 0
         self.total_keystroke_count = 0
-        clicks_frame = tk.Frame(right_frame, bg='white')
+        clicks_frame = tk.Frame(right_frame, bg='#404040')
         clicks_frame.pack(side=tk.TOP, fill=tk.X)
-        self.total_clicks = tk.Label(clicks_frame, text="Total Clicks: 0", font=("Segoe UI", 20), fg='black', bg='white')
+        self.total_clicks = tk.Label(clicks_frame, text="Total Clicks: 0", font=("Segoe UI", 20), fg='white', bg='#404040')
         self.total_clicks.pack()
-        keystrokes_frame = tk.Frame(right_frame, bg='white')
+        keystrokes_frame = tk.Frame(right_frame, bg='#404040')
         keystrokes_frame.pack(side=tk.TOP, fill=tk.X)
-        self.total_keystrokes_label = tk.Label(keystrokes_frame, text="Total Keystroke Count: 0", font=("Segoe UI", 20), fg='black', bg='white')
+        self.total_keystrokes_label = tk.Label(keystrokes_frame, text="Total Keystroke Count: 0", font=("Segoe UI", 20), fg='white', bg='#404040')
         self.total_keystrokes_label.pack()
 
-        total_inputs_frame = tk.Frame(right_frame, bg='white')
+        # Total Inputs Frame
+        total_inputs_frame = tk.Frame(right_frame, bg='#404040')
         total_inputs_frame.pack(side=tk.TOP, fill=tk.X)
-        self.total_inputs_label = tk.Label(total_inputs_frame, text="Total Inputs: 0", font=("Segoe UI", 20), fg='black', bg='white')
+        self.total_inputs_label = tk.Label(total_inputs_frame, text="Total Inputs: 0", font=("Segoe UI", 20), fg='white', bg='#404040')
         self.total_inputs_label.pack()
 
-        # Input strictness controls
+        # Input Strictness Frame
         self.input_strictness = 50
-        input_strictness_frame = tk.Frame(right_frame, bg='white')
+        input_strictness_frame = tk.Frame(right_frame, bg='#404040')
         input_strictness_frame.pack(side=tk.TOP, fill=tk.X)
-        input_strictness_frame.columnconfigure(0, weight=1)  # Configuring column 0 to have equal weight
-        input_strictness_frame.columnconfigure(1, weight=1)  # Configuring column 1 to have equal weight
-
-        self.input_strictness_value = tk.Label(input_strictness_frame, font=("Segoe UI", 20), text='Input Strictness: ' + str(self.input_strictness), fg='black', bg='white')
+        input_strictness_frame.columnconfigure(0, weight=1)
+        input_strictness_frame.columnconfigure(1, weight=1)
+        self.input_strictness_value = tk.Label(input_strictness_frame, font=("Segoe UI", 20), text='Input Strictness: ' + str(self.input_strictness), fg='white', bg='#404040')
         self.input_strictness_value.grid(row=0, columnspan=2)
-        self.input_strictness_textbox = tk.Text(input_strictness_frame, font=("Segoe UI", 20), height=1, width=5)
-        self.input_strictness_textbox.grid(row=1, column=0, pady=(0, 5), padx=5, sticky="ew")  # Added sticky="ew" for equal width distribution
-        self.set_input_strictness_button = ttk.Button(input_strictness_frame, text="Set Input Strictness", style='Big.TButton', command=self.set_input_strictness)
-        self.set_input_strictness_button.grid(row=1, column=1, pady=(0, 5), padx=5, sticky="ew")  # Added sticky="ew" for equal width distribution
-        self.input_strictness_warning_msg = tk.Label(input_strictness_frame, text="", font=("Arial", 15), fg='red', bg='white')
+        self.input_strictness_textbox = tk.Text(input_strictness_frame, font=("Segoe UI", 20), height=1, width=5, bg=text_bg, fg=text_fg)
+        self.input_strictness_textbox.grid(row=1, column=0, pady=(0, 5), padx=5, sticky="ew")
+        self.set_input_strictness_button = ttk.Button(input_strictness_frame, text="Set Input Strictness", style='Custom.TButton', command=self.set_input_strictness)
+        self.set_input_strictness_button.grid(row=1, column=1, pady=(0, 5), padx=5, sticky="ew")
+        self.input_strictness_warning_msg = tk.Label(input_strictness_frame, text="", font=("Arial", 15), fg='red', bg='#404040')
         self.input_strictness_warning_msg.grid(row=2, columnspan=2)
 
-        # Move the reset countdown label to this position, making it the last element in the right_frame
-        self.reset_countdown_label = tk.Label(right_frame, text="Resets in 60 seconds", font=("Segoe UI", 20), fg='black', bg='white')
+        # Reset Countdown Label
+        self.reset_countdown_label = tk.Label(right_frame, text="Resets in 60 seconds", font=("Segoe UI", 20), fg='white', bg='#404040')
         self.reset_countdown_label.pack(side=tk.TOP, fill=tk.X)
 
-        # Add this line i  n the __init__ method
+        # Input Listener Thread
         input_listener_thread = threading.Thread(target=self.run_input_listeners)
         input_listener_thread.daemon = True
         input_listener_thread.start()
-        
+
         # Initialize attributes for video capture and face mesh
         self.mp_face_mesh = mp.solutions.face_mesh
         self.face_mesh = self.mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
@@ -132,8 +142,8 @@ class EyeTrackingApp:
         self.vid = cv2.VideoCapture(self.video_source)
         self.delay = 15
 
-        # Delay the start of video updates until after the mainloop has started
-        self.root.after(100, self.start_updates)  # Wait 100ms to allow the window to initialize
+        # Start video updates
+        self.root.after(100, self.start_updates)
         self.handle_reset_countdown()
         self.root.mainloop()
     def set_input_strictness(self):
@@ -335,16 +345,8 @@ class EyeTrackingApp:
 
     def update_blink_count(self):
         if not self.on_break:  # Only update blink count if not on a break
-
-            # Update the label with the new blink count
             self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
 
-            if self.blink_count >= self.strictness:
-                self.show_break_label()
-            else:
-                self.hide_break_label()
-
-            # Check if the blink count has reached 10 and it's not already on a break
             if self.blink_count >= self.strictness:
                 self.initiate_break()
 
@@ -352,15 +354,11 @@ class EyeTrackingApp:
         # Set the state to break and update the UI accordingly
         self.on_break = True
         self.show_break_label()
-        self.reset_countdown_label.config(text="Timer stopped, take a break!")  # Update the countdown label
+        self.reset_countdown_label.config(text="Timer stopped, take a break!")
         self.handle_reset_countdown(30)  # Start a 30-second break countdown
 
-        # Reset input counts
-        self.total_click_amount = 0
-        self.total_keystroke_count = 0
-        self.update_click_count()
-        self.update_keystroke_count()
-        self.update_total_inputs_label()
+        # Reset all counts
+        self.reset_counters()
 
     def detect_eyes(self, frame):
         # Convert the frame to RGB for MediaPipe processing
