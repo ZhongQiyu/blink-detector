@@ -7,27 +7,31 @@
 0. We would tackle them at the same time! Treat the project as one of your vacation HW.
 
 1. Refactoring: In our current working directory (hs_project):
-(1) Merge System.py, cascade.py, ocr.py, and main.py. Which file can be deleted? Which files should go to which directory? Why?
-(2) Refer to the repository done by Marisabel. Which files are the ones we inherited? Which are not? Can they be consolidated into one folder?
-(3) Apply the same logic of (1) and (2) on the folders. Do not change them into submodules. Warning: Before ANY kinds of deletion, what would we better do? Hint: Modularity sounds a good plan.
+- Rename the variables and the functions that are too general.
+- Merge System.py, cascade.py, ocr.py, and main.py. Which file can be deleted? Which files should go to which directory? Why?
+- Refer to the repository done by Marisabel. Which files are the ones we inherited? Which are not? Can they be consolidated into one folder?
+- Apply the same logic of (1) and (2) on the folders. Do not change them into submodules. Warning: Before ANY kinds of deletion, what would we better do? Hint: Modularity sounds a good plan.
+- The AI feature to trace eye-blinking.
+   - Currently, the model can handle the images that are close to the screen. We apply EAR so far.
+   - However, for the captions a bit away from the camera, the model does not perform really well. Why do you think we are experiencing that? How may we solve this?
+   - We are now using EAR and YOUR NEW METHOD to compute the distance between the upper and the lower eyelids. GPT might suggests one of them to be better, while there might be a better metric. Add examples and shorten your prompts so that we can find one of them that works better than the others.
 
 2. Implementation:
-- The REFACTORED names of the variables and the functions.
-- An AI feature that enhances the tracing of eye-blinking.
-   - Currently the model can handle the images that are close to the screen. We apply EAR so far.
-   - However, for the captions a bit away from the camera, the model does not perform really well. Why do you think we are experiencing that? How may we solve this?
-   - We currently use EAR to compute the distance between the upper and the lower eyelids. But is there a better metric? Additionally, refer to the OpenCV API if you want to.
 - A better layout a.k.a arrangement of elements for the controlling GUI. 
    - Currently our placement of the display is about 70% on the left, while the GUI on the right can be a bit smaller. Save space for the video display and detection. Try to truncate the warning messages and the contents of the buttons.
    - While flexing the components, we can apply a grid layout or a drop-down menu. However, since the drop-down menu takes additional work in pynput, it would be better to perform scaling and movement when we change to grid layout. Find the functions to do this and apply them.
-   - Add the statistics of (0) the # of eye-tracking feature points, (1) real-time tracking of keyboard input, and (2) the location of mouse click on the screen. *Overlap the statistics (what have we had so far?) with the WeChat window.
+   - Add the statistics of:
+      - The # of eye-tracking feature points
+      - The real-time tracking of keyboard input, and
+      - The location of mouse click on the screen.
+      - *Overlap the statistics with the video window.
 - A threshold that tells the user if they needs a break. It needs to be 1 or 2 numbers on the counts of eye-blinking, key-strokes on the keyboard, and that of the mouse. But recall that either the eye-blink counts works off the range or any of the two counts on key-stroke soar too much would be able to let the system warn the user.
 - A script that connects your external hardware as a virtual camera to work on OpenCV. Since we need to display the project in Zoom, we need to leave the embedded one for the main project while enabling video input for Zoom with the virtual camera.
 
 3. Synchronization:
 - In the working directory that you have on your computer, upload ALL the dependencies in a folder.
 - Merge with whatever Marisabel has shared with you and use my GitHub repo to synchronize the progress. Again, be aware of the naming of everything.
-- Run the command lines to install the Pyinstaller library. Try to wrap up your current version of code with Pyinstaller as an .exe so that it (1) COMPILES and (2) RUNS.
+- Run the command lines to install the Pyinstaller library. Try to wrap up your current version of code with Pyinstaller as an .exe so that it COMPILES and RUNS.
 - Tackle with Git when you iterate the versions. We are using the ```main``` branch, and if you want to have you own, feel free to create one. Send pull requests per your version update.
 
 4. Pro-tips:
