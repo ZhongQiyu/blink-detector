@@ -2,53 +2,50 @@
 
 **This is a mirror of the HS Project in CMA.**
 
-## Homework (12/31/2023):
+## Homework (1/20/2024):
 
 0. We would tackle them at the same time! Treat the project as one of your vacation HW.
 
 1. Refactoring: In our current working directory (hs_project):
-(1) Merge System.py and allansystem.py. Which file can be deleted? Warning: Before ANY kinds of deletion, what would we better do?
-(2) Consolidate cascade.py, ocr.py, and main.py. Which files should go to which directory? Why?
-(3) Refer to the repository done by Marisabel. Which files are the ones we inherited? Which are not? Can they be consolidated into one folder? Hint: Modularity sounds a good plan.
-(4) Apply the same logic of (1)-(2)-(3) on the folders. Do not change them into submodules.
+(1) Merge System.py, cascade.py, ocr.py, and main.py. Which file can be deleted? Which files should go to which directory? Why?
+(2) Refer to the repository done by Marisabel. Which files are the ones we inherited? Which are not? Can they be consolidated into one folder?
+(3) Apply the same logic of (1) and (2) on the folders. Do not change them into submodules. Warning: Before ANY kinds of deletion, what would we better do? Hint: Modularity sounds a good plan.
 
 2. Implementation:
-- An AI feature that traces the count of times where the eye(s) blink(s). Hint: How can we anchor the eyes? Refer to the OpenCV API if you want to.
-- A better video-capture layout in the GUI. Hint: Change the arrangement of the elements.
-   - Save space for the video display and detection. Is there a way to put the video in the center of the window?
-   - When we invoke the systematic features, we would be able to see the exact resolution of the displayed screen. However, it would be better to perform scaling and movement automatically when we change the window's size. Find the functions to do this. Hint: HTML-CSS5 APIs.
-   - *Overlap the statistics (what have we had so far?) with the WeChat window.
-- A script that connects your computer hardware to make the virtual camera work, in order to let our project proceeds for display in Zoom. Leave the original one for the main project.
 - The REFACTORED names of the variables and the functions.
+- An AI feature that enhances the tracing of eye-blinking.
+   - Currently the model can handle the images that are close to the screen. We apply EAR so far.
+   - However, for the captions a bit away from the camera, the model does not perform really well. Why do you think we are experiencing that? How may we solve this?
+   - We currently use EAR to compute the distance between the upper and the lower eyelids. But is there a better metric? Additionally, refer to the OpenCV API if you want to.
+- A better layout a.k.a arrangement of elements for the controlling GUI. 
+   - Currently our placement of the display is about 70% on the left, while the GUI on the right can be a bit smaller. Save space for the video display and detection. Try to truncate the warning messages and the contents of the buttons.
+   - While flexing the components, we can apply a grid layout or a drop-down menu. However, since the drop-down menu takes additional work in pynput, it would be better to perform scaling and movement when we change to grid layout. Find the functions to do this and apply them.
+   - Add the statistics of (0) the # of eye-tracking feature points, (1) real-time tracking of keyboard input, and (2) the location of mouse click on the screen. *Overlap the statistics (what have we had so far?) with the WeChat window.
+- A threshold that tells the user if they needs a break. It needs to be 1 or 2 numbers on the counts of eye-blinking, key-strokes on the keyboard, and that of the mouse. But recall that either the eye-blink counts works off the range or any of the two counts on key-stroke soar too much would be able to let the system warn the user.
+- A script that connects your external hardware as a virtual camera to work on OpenCV. Since we need to display the project in Zoom, we need to leave the embedded one for the main project while enabling video input for Zoom with the virtual camera.
 
 3. Synchronization:
-- I will start to pick up from your code EVERY DAY. Compile a bit when you are able to, since we are approaching the end of the project.
-- Run the command lines to install the Pyinstaller library. Try to wrap up your current version of code so that it (1) COMPILES and (2) RUNS.
-- Tackle with Git when you iterate the versions. We are using the ```main``` branch, and if you want to have you own, feel free to create one. Send pull requests per your update.
-- Share the version that you think would run smoothly in the two sessions to have.
-- *Try to run with VS Code and PyCharm, and test the difference in terms of compilation time. Colab prevents the GUI parts to load, and it is the full-size compilers that helps us.
+- In the working directory that you have on your computer, upload ALL the dependencies in a folder.
+- Merge with whatever Marisabel has shared with you and use my GitHub repo to synchronize the progress. Again, be aware of the naming of everything.
+- Run the command lines to install the Pyinstaller library. Try to wrap up your current version of code with Pyinstaller as an .exe so that it (1) COMPILES and (2) RUNS.
+- Tackle with Git when you iterate the versions. We are using the ```main``` branch, and if you want to have you own, feel free to create one. Send pull requests per your version update.
 
 4. Pro-tips:
-- When deletion of files happened, revert to the last-updated version. Save the directories often when you finish an iteration.
 - Do `git pull` then `git push ...` AS ALWAYS. This will eliminate at least 60% of the clashes.
-- Use the GitHub feature in either PyCharm or VS Code when you are in progress. It is better then plain-text because of the auto-configuration of the .iml files, etc.
+- When deletion of files happened, revert to the last-updated version. Save the directories often when you finish an iteration.
+- Use the GitHub feature in either PyCharm or VS Code to synchronize the progress. It is better than plain-text because of the auto-configuration of the .iml files, etc.
+- Work on 2 and 3 mostly. Cite the work from ChatGPT with notes when they bring a large help to your project (e.g. put up a module that works completely or fixed a stingy bug).
 
-5. In the website that you shared with me:
-- If it is allowed, please share the source code with me.
-- Add a new demo for the project that you have when you finish the HWs above. I will save it to prepare for our final evaluation.
-
-6. Final Compilation!
-- In the working directory that you have on your computer, upload ALL the dependencies in a folder.
-- Again, be aware of the naming of everything. Merge with whatever Marisabel has shared with you and use my GitHub repo to synchronize the progress.
-
-7. Class Extension:
-- We have had 23 sessions. How do you think for the sessions to have? 
-- Remember we have deadlines for the school applications too. Do you think 1-2 more classes can get the stuff done?
-- We will talk about this in the next session (expected 1/5/24, Friday) while your patent is under review for approval.
+5. Final Compilation!
+- We will put up the website together. If it is allowed, please share the source code with me.
+- Add a new demo for the project once you have a running version. I will save it to prepare for our final evaluation on the end of this month.
+- Since we are approaching the end of the project, I will pick up from your code with advice EVERY DAY. Spend 15-30 minutes aside from your daily arrangements to work on the project. *The due date is 1/27/2024.*
+- Share the version that you think would run smoothly in the last two sessions to have. *Try to run with VS Code or PyCharm to compare and to test the difference of compilation time. Colab prevents the GUI parts to load, and it is the full-size compilers that helps us.
 
 ## Issues:
 - Raise concerns of the design in modularization (ai_engine.py).
-- Merge Marisabel's repo with ours?
+- Allen's hardware support on mediapipe and pynput with the virtual camera.
+- Jimmy's difference of the resolution on camera intake from that of Allen's. 
 
 ## Curriculum
 
@@ -147,11 +144,13 @@ pip install mediapipe
 import cv2
 import mediapipe as mp
 ```
+
 2. Initialize the MediaPipe Face Mesh model:
 ```python
 mp_face_mesh = mp.solutions.face_mesh
 face_mesh = mp_face_mesh.FaceMesh()
 ```
+
 3. Initialize the webcam or load an image:
 ```python
 # To use a webcam, you can initialize it like this:
@@ -160,6 +159,7 @@ cap = cv2.VideoCapture(0)
 # To use an image, you can load it like this:
 # image = cv2.imread('your_image.jpg')
 ```
+
 4. Create a loop to process frames (for live video):
 ```python
 while True:
@@ -173,6 +173,7 @@ while True:
    # Process the frame with MediaPipe Face Mesh
    results = face_mesh.process(rgb_frame)
 ```
+
 5. Draw facial landmarks on the frame:
 ```python
    if results.multi_face_landmarks:
@@ -181,6 +182,7 @@ while True:
                x, y, z = int(landmark.x * frame.shape[1]), int(landmark.y * frame.shape[0]), int(landmark.z * frame.shape[1])
                cv2.circle(frame, (x, y), 2, (0, 255, 0), -1)
 ```
+
 6. Display the processed frame:
 ```python
    cv2.imshow('Face Mesh', frame)
@@ -188,17 +190,19 @@ while True:
    if cv2.waitKey(1) & 0xFF == ord('q'):
        break
 ```
+
 7. Release the video capture and close the OpenCV window when finished:
 ```python
 cap.release()
 cv2.destroyAllWindows()
 ```
+
 - To run the code with a webcam, make sure you have a webcam connected to your computer. Execute the script, and it will
   open a window displaying the webcam feed with facial landmarks drawn.
 - To run the code with an image, uncomment the image loading section and provide the path to your image. Execute the
   script, and it will display the image with facial landmarks drawn.
 
-#### Show left eyes
+#### Show Left Eyes
 
 Let's inspect the image that show the canonical face model uv visualization
 ![canonical_face_model_uv_visualization.png](canonical_face_model_uv_visualization.png)
@@ -208,6 +212,7 @@ If we zoom in the image we can get the key-points for the left eyes
 
 To show only the left eye using the MediaPipe Face Mesh model, you can modify the code by selecting and drawing only the
 left eye landmarks. Here's how you can do it:
+
 ```python
 import cv2
 import mediapipe as mp
@@ -243,7 +248,6 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
-
 ```
 
 In this modified code, we define the left_eye_landmark_indices list to specify the indices of the landmarks
@@ -254,12 +258,11 @@ landmarks.
 #### Show Right Eyes
 
 #### Eyes Blink Detector
-
 - process_image
     - fetch_face_data
     - landmarks_detection
     - update_blink_data
-    - calculate blink ratio
+    - calculate the blink ratio
         - euclidean_distance
         - blink_ratio
     - draw_eyes
@@ -267,18 +270,18 @@ landmarks.
     - show_activity_timer
     - calculate_frame_per_sec
     - reset_values
-- Test using video input
+- tester and the test cases for video input
 
 ### Module 3: Mouse and Keyboard Tracker
 
 #### Learn about pynput
 
 - Monitoring the mouse
-A mouse listener is a threading.Thread, and all callbacks will be invoked from the thread.
-Call pynput.mouse.Listener.stop from anywhere, raise StopException or return False from a callback to stop the listener.
-When using the non-blocking version above, the current thread will continue executing. This might be necessary when
-integrating with other GUI frameworks that incorporate a main-loop, but when run from a script, this will cause the
-program to terminate immediately.
+   - A mouse listener is a threading.Thread, and all callbacks will be invoked from the thread.
+   - Call pynput.mouse.Listener.stop from anywhere, raise StopException or return False from a callback to stop the listener.
+   - When using the non-blocking version above, the current thread will continue executing.
+      - This might be necessary when integrating with other GUI frameworks that incorporate a main-loop.
+      - But when run from a script, this will cause the program to terminate immediately.
 
 ```python
 from pynput import mouse
@@ -313,14 +316,14 @@ with mouse.Listener(
 ```
 
 - Monitoring the keyboard
-A keyboard listener is a threading.Thread, and all callbacks will be invoked from the thread.
-Call pynput.keyboard.Listener.stop from anywhere, raise StopException or return False from a callback to stop the
-listener.
-The key parameter passed to callbacks is a pynput.keyboard.Key, for special keys, a pynput.keyboard.KeyCode for normal
-alphanumeric keys, or just None for unknown keys.
-When using the non-blocking version above, the current thread will continue executing. This might be necessary when
-integrating with other GUI frameworks that incorporate a main-loop, but when run from a script, this will cause the
-program to terminate immediately.
+   - A keyboard listener is a threading.Thread, and all callbacks will be invoked from the thread.
+      - Call pynput.keyboard.Listener.stop from anywhere, raise StopException or return False from a callback to stop the
+   listener.
+      - The key parameter passed to callbacks is a pynput.keyboard.Key, for special keys, a pynput.keyboard.KeyCode for normal
+   alphanumeric keys, or just None for unknown keys.
+   - When using the non-blocking version above, the current thread will continue executing.
+      - This might be necessary when integrating with other GUI frameworks that incorporate a main-loop.
+      - But when run from a script, this will cause the program to terminate immediately.
 
 ```python
 from pynput import keyboard
@@ -354,7 +357,6 @@ listener.start()
 ```
 
 #### Keyboard and Mouse Tracker
-
 - Define a callback function for mouse events
 - Define a callback function for keyword events
 - Track user activity
@@ -364,28 +366,24 @@ listener.start()
 ### Module 4 - Activity and Inactivity Engine
 
 #### Build Activity and Inactivity Engine
-
 - Simulate Data
     - simulate_blink_rate(num_intervals):
     - simulate_usage_time(session_duration_minutes, max_interval_duration_minutes):
     - simulate_inactivity(usage_data):
     - simulate_activity_labels(inactivity_data, activity_data, threshold_ratio, activity_threshold):
 - Run train_model
-- Do Prediction
+- Make Predictions
 
 ### Module 5 - Build Eyes tracker
-
 - Process Image in a Thread
 - Use the AI to predict if a person need to take a break (break_prediction)
 - Apply run_engine
 
 ### Module 6 - APP desktop
-
 - Follow this curriculum to learn about Tkinter https://quest.codingmind.com/view/713865CE2E1144318BD128843A
 - Build the EyeTrackerAPP
 
 ## References:
-
 - https://pynput.readthedocs.io/
 - https://docs.opencv.org/3.4/d6/d00/tutorial_py_root.html
 - https://github.com/google/mediapipe/wiki/MediaPipe-Face-Mesh
