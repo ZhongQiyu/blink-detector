@@ -2,7 +2,7 @@
 
 **This is a mirror of the HS Project in CMA.**
 
-## Homework (1/20/2024):
+## Homework (1/26/2024):
 
 0. We would tackle them at the same time! Treat the project as one of your vacation HW.
 
@@ -11,33 +11,39 @@
 - Merge System.py, cascade.py, ocr.py, and main.py. Which file can be deleted? Which files should go to which directory? Why?
 - Refer to the repository done by Marisabel. Which files are the ones we inherited? Which are not? Can they be consolidated into one folder?
 - Apply the same logic of (1) and (2) on the folders. Do not change them into submodules. Warning: Before ANY kinds of deletion, what would we better do? Hint: Modularity sounds a good plan.
-- The AI feature to trace eye-blinking.
-   - Currently, the model can handle the images that are close to the screen. We apply EAR so far.
-   - However, for the captions a bit away from the camera, the model does not perform really well. Why do you think we are experiencing that? How may we solve this?
-   - We are now using EAR and YOUR NEW METHOD to compute the distance between the upper and the lower eyelids. GPT might suggests one of them to be better, while there might be a better metric. Add examples and shorten your prompts so that we can find one of them that works better than the others.
 
 2. Implementation:
-- A better layout a.k.a arrangement of elements for the controlling GUI. 
-   - Currently our placement of the display is about 70% on the left, while the GUI on the right can be a bit smaller. Save space for the video display and detection. Try to truncate the warning messages and the contents of the buttons.
-   - While flexing the components, we can apply a grid layout or a drop-down menu. However, since the drop-down menu takes additional work in pynput, it would be better to perform scaling and movement when we change to grid layout. Find the functions to do this and apply them.
+- The AI feature to trace eye-blinking.
+   - Currently, the model can handle the images that are close to the screen. We are now using the CENTRALIZING method to count to the eye blinks.
+   - However, for the captions a bit away from the camera, the model does not perform really well.
+      - Why do you think we are experiencing that? How may we solve this?
+      - Apply a dynamic procedure that captures and adjusts the detection model's confidence (i.e. the user's confidence too as they calls the GUI) for eye-blinking. The further you are away from the screen, the less difference of the eyelids is needed for telling 1 blink, vice versa.
+- A better layout a.k.a arrangement of elements for the controlling GUI.
    - Add the statistics of:
       - The # of eye-tracking feature points
       - The real-time tracking of keyboard input, and
-      - The location of mouse click on the screen.
-      - *Overlap the statistics with the video window.
-- A threshold that tells the user if they needs a break. It needs to be 1 or 2 numbers on the counts of eye-blinking, key-strokes on the keyboard, and that of the mouse. But recall that either the eye-blink counts works off the range or any of the two counts on key-stroke soar too much would be able to let the system warn the user.
-- A script that connects your external hardware as a virtual camera to work on OpenCV. Since we need to display the project in Zoom, we need to leave the embedded one for the main project while enabling video input for Zoom with the virtual camera.
+      - The location of mouse clicks on the screen.
+      - *Overlapping statistics within the video window.
+   - Aside from the current text-input box that changes the strictness, we need to enhance the AI feature's controls on the user's end.
+      - If the video stream is blocked too long by external items, the dynamic adjustment pauses until the blocking items are removed.
+      - We will have a time-lapse here, say like a 3-second threshold.
+   - Currently our placement of the display is about 70% on the left, while the GUI on the right can be a bit smaller.
+      - Save space for the video display and detection. Try to truncate the warning messages and the contents of the buttons.
+      - While flexing the components, we can apply a grid layout or a drop-down menu. However, the drop-down menu takes additional work, so choose the track that fits your time schedule.
+- A fine-tuning threshold of key strokes from both the keyboard and the mouse that tells the user if they needs a break. We have the default parameters set up, while we need additional efforts to let it broadcast to different kinds of tasks.
+- Since we need to display the project in Zoom, we need to leave the embedded camera for the main project while enabling video input for Zoom with the virtual camera. Write a script that connects your external hardware as a virtual camera to work on OpenCV. 
+- *A script that generalizes the libraries used in both macOS and Windows.
 
 3. Synchronization:
-- In the working directory that you have on your computer, upload ALL the dependencies in a folder.
-- Merge with whatever Marisabel has shared with you and use my GitHub repo to synchronize the progress. Again, be aware of the naming of everything.
+- In the working directory that you have on your computer, upload ALL the dependencies in a folder as requirements.txt.
 - Run the command lines to install the Pyinstaller library. Try to wrap up your current version of code with Pyinstaller as an .exe so that it COMPILES and RUNS.
-- Tackle with Git when you iterate the versions. We are using the ```main``` branch, and if you want to have you own, feel free to create one. Send pull requests per your version update.
 
 4. Pro-tips:
+- Merge with whatever Marisabel has shared with you and use my GitHub repo to synchronize the progress. Again, be aware of the naming of everything.
 - Do `git pull` then `git push ...` AS ALWAYS. This will eliminate at least 60% of the clashes.
 - When deletion of files happened, revert to the last-updated version. Save the directories often when you finish an iteration.
 - Use the GitHub feature in either PyCharm or VS Code to synchronize the progress. It is better than plain-text because of the auto-configuration of the .iml files, etc.
+- Tackle with Git when you iterate the versions. We are using the ```main``` branch, and if you want to have you own, feel free to create one. Send pull requests per your version update.
 - Work on 2 and 3 mostly. Cite the work from ChatGPT with notes when they bring a large help to your project (e.g. put up a module that works completely or fixed a stingy bug).
 
 5. Final Compilation!
@@ -47,9 +53,8 @@
 - Share the version that you think would run smoothly in the last two sessions to have. *Try to run with VS Code or PyCharm to compare and to test the difference of compilation time. Colab prevents the GUI parts to load, and it is the full-size compilers that helps us.
 
 ## Issues:
-- Raise concerns of the design in modularization (ai_engine.py).
 - Allen's hardware support on mediapipe and pynput with the virtual camera.
-- Jimmy's difference of the resolution on camera intake from that of Allen's. 
+- Jimmy's difference of the resolution on camera intake from that of Allen's. Vice Versa.
 
 ## Curriculum
 
