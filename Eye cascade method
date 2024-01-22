@@ -1,12 +1,13 @@
 import time
 import threading
 import cv2
-import mediapipe as mp
+#import mediapipe as mp
 import tkinter as tk
 from PIL import Image, ImageTk
 from pynput.mouse import Listener as MouseListener
 from pynput.keyboard import Listener as KeyboardListener, Key
 from tkinter import ttk
+
 
 
 class EyeTrackingApp:
@@ -17,6 +18,8 @@ class EyeTrackingApp:
         self.root.configure(bg='#404040')
 
         self.on_break = False
+
+        self.eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
 
         # Create a style object
         style = ttk.Style()
@@ -76,8 +79,7 @@ class EyeTrackingApp:
 
         # Blink Count Frame
         self.blink_count = 0
-        self.EAR_THRESHOLD = 0.18
-
+        self.EAR_THRESHOLD = 0.21
         self.eye_closed = False
         self.blink_count_frame = tk.Frame(right_frame, bg='#404040')
         self.blink_count_frame.pack(side=tk.TOP, fill=tk.X)
@@ -130,18 +132,11 @@ class EyeTrackingApp:
         self.reset_countdown_label = tk.Label(right_frame, text="Resets in 60 seconds", font=("Segoe UI", 20), fg='white', bg='#404040')
         self.reset_countdown_label.pack(side=tk.TOP, fill=tk.X)
 
-        self.strictness_textbox.bind("<FocusOut>", lambda event: self.on_focus_out(event, self.strictness_textbox))
-        self.input_strictness_textbox.bind("<FocusOut>", lambda event: self.on_focus_out(event, self.input_strictness_textbox))
-
-
         # Input Listener Thread
         input_listener_thread = threading.Thread(target=self.run_input_listeners)
         input_listener_thread.daemon = True
         input_listener_thread.start()
 
-        # Initialize attributes for video capture and face mesh
-        self.mp_face_mesh = mp.solutions.face_mesh
-        self.face_mesh = self.mp_face_mesh.FaceMesh(min_detection_confidence=0.5, min_tracking_confidence=0.5)
         self.is_tracking = False
         self.video_source = 0
         self.vid = cv2.VideoCapture(self.video_source)
@@ -153,7 +148,6 @@ class EyeTrackingApp:
         self.root.mainloop()
     def set_input_strictness(self):
         value = self.input_strictness_textbox.get("1.0", "end").strip()
-        self.input_strictness_textbox.config(state=tk.NORMAL)
         try:
             intvalue = int(value)
             if 0 <= intvalue <= 500:
@@ -164,9 +158,7 @@ class EyeTrackingApp:
                 self.input_strictness_warning_msg.config(text="Invalid Input! Please enter a number between 0 and 500!")
         except ValueError:
             self.input_strictness_warning_msg.config(text="Invalid Input! Please enter an integer!")
-    def on_focus_out(self, event, textbox):
-        # This function will be called when the textbox loses focus
-        textbox.config(state=tk.DISABLED) 
+
     def reset_counters(self):
         # Reset all the counters and update their respective labels
         self.blink_count = 0
@@ -196,17 +188,13 @@ class EyeTrackingApp:
         self.break_label.pack_forget()
 
     def run_input_listeners(self):
-        # Initialize and start the mouse listener
+        # Initialize the mouse listener
         mouse_listener = MouseListener(on_click=self.on_click)
         mouse_listener.start()
 
-        # Initialize and start the keyboard listener
+        # Initialize the keyboard listener
         keyboard_listener = KeyboardListener(on_press=self.on_press)
         keyboard_listener.start()
-
-        # Keep the thread running
-        mouse_listener.join()
-        keyboard_listener.join()
 
 
     def start_eye_tracking(self):
@@ -293,21 +281,26 @@ class EyeTrackingApp:
 
 
     def detect_eyes(self, frame):
-        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = self.face_mesh.process(image)
-        if results.multi_face_landmarks:
-            for face_landmarks in results.multi_face_landmarks:
-                eye_indices = list(range(130, 160)) + list(range(385, 398))
-                for idx in eye_indices:
-                    if idx < len(face_landmarks.landmark):
-                        point = face_landmarks.landmark[idx]
-                        x = int(point.x * frame.shape[1])
-                        y = int(point.y * frame.shape[0])
-                        cv2.circle(frame, (x, y), 1, (0, 255, 0), -1)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        eyes = self.eye_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=4, minSize=(30, 30))
+
+        # Blink detection logic
+        if len(eyes) == 0 and not self.eye_closed:  # Eyes not detected (blink)
+            self.eye_closed = True
+        elif len(eyes) > 0 and self.eye_closed:  # Eyes detected again (end of blink)
+            self.eye_closed = False
+            self.blink_count += 1
+            self.update_blink_count()
+
+        # Draw ellipses around the eyes for visualization
+        for (x, y, w, h) in eyes:
+            center = (x + w // 2, y + h // 2)
+            axes = (max(5, w // 4), max(5, h // 6))  # Adjust the axes lengths to fit the eye shape better
+            cv2.ellipse(frame, center, axes, 0, 0, 360, (255, 0, 0), 2)
+
         return frame
 
     def set_strictness(self):
-        self.strictness_textbox.config(state=tk.NORMAL)
         value = self.strictness_textbox.get("1.0", "end").strip()
         try:
             intvalue = int(value)
@@ -320,17 +313,17 @@ class EyeTrackingApp:
         except ValueError:
             self.warning_msg.config(text="Invalid Input! Please enter an integer!")
 
+   
     def on_click(self, x, y, button, pressed):
-        if pressed and not self.on_break:
+        if pressed:
             self.total_click_amount += 1
             self.update_click_count()
             self.update_total_inputs_label()
 
     def on_press(self, key):
-        if not self.on_break:
-            self.total_keystroke_count += 1
-            self.update_keystroke_count()
-            self.update_total_inputs_label()
+        self.total_keystroke_count += 1
+        self.update_keystroke_count()
+        self.update_total_inputs_label()
 
 
     def update_click_count(self):
@@ -368,70 +361,12 @@ class EyeTrackingApp:
 
         # Reset all counts
         self.reset_counters()
-
-    def detect_eyes(self, frame):
-        # Convert the frame to RGB for MediaPipe processing
-        image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        results = self.face_mesh.process(image)
-
-        # Check if any face landmarks were detected
-        if results.multi_face_landmarks:
-            for face_landmarks in results.multi_face_landmarks:
-                # Hypothetical indices for the landmarks of each eye.
-                # You need to replace these with the correct indices from MediaPipe
-                right_eye_indices = [33, 160, 158, 133, 153, 144]  # replace with the correct indices
-                left_eye_indices = [362, 385, 387, 263, 373, 380]
-
-                # Left eye indices list
-                """
-                LEFT_EYE =[ 362, 382, 381, 380, 374, 373, 390, 249, 263, 466, 388, 387, 386, 385,384, 398 ]
-                # Right eye indices list
-                RIGHT_EYE=[ 33, 7, 163, 144, 145, 153, 154, 155, 133, 173, 157, 158, 159, 160, 161 , 246 ]
-                """
-
-                # Extract the landmark coordinates for each eye
-                right_eye = [face_landmarks.landmark[i] for i in right_eye_indices]
-                left_eye = [face_landmarks.landmark[i] for i in left_eye_indices]
-
-                # Calculate EAR for both eyes
-                left_ear = self.calculate_ear(left_eye)
-                right_ear = self.calculate_ear(right_eye)
-
-                # Average the EAR for both eyes for better stability
-                ear = (left_ear + right_ear) / 2.0
-
-                # Blink detection logic
-                if self.eye_closed and ear > self.EAR_THRESHOLD:
-                    self.blink_count += 1
-                    self.update_blink_count()
-                    self.eye_closed = False  # Reset the eye closed flag
-                elif not self.eye_closed and ear < self.EAR_THRESHOLD:
-                    self.eye_closed = True  # Set the eye closed flag
-
-                # Visualize the eye landmarks for debugging purposes
-                for idx in right_eye_indices + left_eye_indices:
-                    if idx < len(face_landmarks.landmark):
-                        point = face_landmarks.landmark[idx]
-                        x = int(point.x * frame.shape[1])
-                        y = int(point.y * frame.shape[0])
-                        cv2.circle(frame, (x, y), 1, (0, 255, 0), -1)
-
-        return frame
-
-
-    def calculate_ear(self, eye):
-        # EAR calculation with six points
-        P2_P6 = self.distance(eye[1], eye[5])
-        P3_P5 = self.distance(eye[2], eye[4])
-        P1_P4 = self.distance(eye[0], eye[3])
-        ear = (P2_P6 + P3_P5) / (2.0 * P1_P4)
-        return ear
-
-    def distance(self, p1, p2):
-        # Calculate the Euclidean distance between two points
-        x_diff = p2.x - p1.x
-        y_diff = p2.y - p1.y
-        return (x_diff**2 + y_diff**2)**0.5
     
 
 app = EyeTrackingApp("MediaPipe Eye Tracking with Tkinter")
+
+
+"""
+H.W:
+-Automatic adjustment of the strictness of blink detection based on distace of user from computer camera
+"""
