@@ -35,6 +35,7 @@
 - *A script that generalizes the libraries used in both macOS and Windows.
 
 3. Synchronization:
+- Make pull requests for your forked repository with mine. I am making my requests based on `pauseForSight` too.
 - In the working directory that you have on your computer, upload ALL the dependencies in a folder as requirements.txt.
 - Run the command lines to install the Pyinstaller library. Try to wrap up your current version of code with Pyinstaller as an .exe so that it COMPILES and RUNS.
 
