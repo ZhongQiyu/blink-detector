@@ -2,9 +2,9 @@
 
 **This is a mirror of the HS Project in CMA.**
 
-## Homework (1/26/2024):
+## Homework (2/2/2024):
 
-0. We would tackle them at the same time! Treat the project as one of your vacation HW.
+0. We would tackle them at the same time! Treat the project as one of your HW for the semester.
 
 1. Refactoring: In our current working directory (hs_project):
 - Rename the variables and the functions that are too general.
@@ -24,12 +24,13 @@
       - The real-time tracking of keyboard input, and
       - The location of mouse clicks on the screen.
       - *Overlapping statistics within the video window.
-   - Aside from the current text-input box that changes the strictness, we need to enhance the AI feature's controls on the user's end.
+   - Aside from the current text-input box that changes the strictness, enhance the AI feature's controls on the user's end.
       - If the video stream is blocked too long by external items, the dynamic adjustment pauses until the blocking items are removed.
       - We will have a time-lapse here, say like a 3-second threshold.
    - Currently our placement of the display is about 70% on the left, while the GUI on the right can be a bit smaller.
       - Save space for the video display and detection. Try to truncate the warning messages and the contents of the buttons.
       - While flexing the components, we can apply a grid layout or a drop-down menu. However, the drop-down menu takes additional work, so choose the track that fits your time schedule.
+   - Replace the warning messages with pop-up windows to show the moments of stopping the video input. 
 - A fine-tuning threshold of key strokes from both the keyboard and the mouse that tells the user if they needs a break. We have the default parameters set up, while we need additional efforts to let it broadcast to different kinds of tasks.
 - Since we need to display the project in Zoom, we need to leave the embedded camera for the main project while enabling video input for Zoom with the virtual camera. Write a script that connects your external hardware as a virtual camera to work on OpenCV. 
 - *A script that generalizes the libraries used in both macOS and Windows.
@@ -50,7 +51,7 @@
 5. Final Compilation!
 - We will put up the website together. If it is allowed, please share the source code with me.
 - Add a new demo for the project once you have a running version. I will save it to prepare for our final evaluation on the end of this month.
-- Since we are approaching the end of the project, I will pick up from your code with advice EVERY DAY. Spend 15-30 minutes aside from your daily arrangements to work on the project. *The due date is 1/27/2024.*
+- Since we are approaching the end of the project, I will pick up from your code with advice EVERY DAY. Spend 15-30 minutes aside from your daily arrangements to work on the project. *The due date is 2/3/2024.*
 - Share the version that you think would run smoothly in the last two sessions to have. *Try to run with VS Code or PyCharm to compare and to test the difference of compilation time. Colab prevents the GUI parts to load, and it is the full-size compilers that helps us.
 
 ## Issues:
@@ -397,4 +398,5 @@ listener.start()
 - https://pynput.readthedocs.io/
 - https://docs.opencv.org/3.4/d6/d00/tutorial_py_root.html
 - https://github.com/google/mediapipe/wiki/MediaPipe-Face-Mesh
+- https://developers.google.com/mediapipe/solutions/vision/face_landmarker
 - ...
