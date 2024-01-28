@@ -14,7 +14,7 @@
 
 2. Implementation:
 - The AI feature to trace eye-blinking.
-   - Currently, the model can handle the images that are close to the screen. We are now using the CENTRALIZING method to count to the eye blinks.
+   - Currently, the model can handle the images that are close to the screen. We are now using the hybrid method of combining Eye Cascade and Mediapipe to count to the eye blinks.
    - However, for the captions a bit away from the camera, the model does not perform really well.
       - Why do you think we are experiencing that? How may we solve this?
       - Apply a dynamic procedure that captures and adjusts the detection model's confidence (i.e. the user's confidence too as they calls the GUI) for eye-blinking. The further you are away from the screen, the less difference of the eyelids is needed for telling 1 blink, vice versa.
