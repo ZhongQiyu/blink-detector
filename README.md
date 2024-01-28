@@ -1,41 +1,36 @@
-9.17.2023 - 2.3.2024
-# Coding Minds Academy: CS Screen Usage AI Project (eyes_rest)
+# CS Screen Usage AI Project (eyes_rest) 9.17.2023 - 2.3.2024
 
-**This is a mirror of the HS Project in CMA.**
+**This is a mirror of the HS Project in Coding Minds Academy.**
 
 ## Homework (2/2/2024):
 
 0. We would tackle them at the same time! Treat the project as one of your HW for the semester. A for Allen, and J for Jimmy.
 
-1. Implementation: (A)
-- Allen's hardware support on mediapipe and pynput with the virtual camera.
-   - Allen is using PyQt5 and Dlib as alternatives, but it would still be better to figure out mediapipe on macOS and the Windows VM.
-   - Refer to the API of CMake and Bazel.
-- The fine-tuning module of eye-blink tracing. Methodology: ``
-   - Currently we are combining the CascadeClassifier in OpenCV (?) and the Face Mesh (`mediapipe.solutions.face_mesh`) to count the eye blinks.
-   - For the captions a bit away from the camera, the model can perform better.
-   - Why do you think we are experiencing that? How may we solve this?
-   - Refer to the MediaPipe API.
+1. Implementation: (A by 1.29.24)
+- Add hardware support on mediapipe and pynput with the virtual camera on Allen's machine.
+   - Allen is using PyQt5 and Dlib as alternatives for pynput and MediaPipe respectively, due to the hardware's limitation and difference of configurations in Jimmy's machine and that of Allen.
+   - But it would still be better to figure out mediapipe on macOS and the Windows VM. Try to embed MediaPipe still on macOS, while pulling an alternative for pynput if needed. Refer to the API of CMake and Bazel to install MediaPipe on the Windows VM if the macOS one does not work. 
 - A better layout a.k.a arrangement of elements for the controlling GUI.
    - Replace the warning messages with pop-up windows to show the moments of stopping the video input.
    - Currently our placement of the display is about 70% on the left, while the GUI on the right can be a bit smaller. Save space for the video display and detection to be 75-80%. Try to truncate the warning messages and the contents of the buttons.
 
-2. Refactoring: (J; *A needs J's approval and synchronization of env vars*)
-- In our current working directory (hs_project):
+2. Refactoring: (J by 2.2.24)
+- In our current working directory:
    - Rename the variables and the functions that are too general.
    - Merge System.py, cascade.py, ocr.py, and main.py. Which file can be deleted? Which files should go to which directory? Why?
    - Refer to the repository done by Marisabel. Which files are the ones we inherited? Which are not? Can they be consolidated into one folder?
 - Apply the same logic of (1) and (2) on the folders. Do not change them into submodules. Warning: Before ANY kinds of deletion, what would we better do? Hint: Modularity sounds a good plan.
+- *A needs J's approval and synchronization of env vars.*
 
-3. Synchronization: (J; Git)
-- Make pull requests for your forked repository with mine. I am making my requests based on `pauseForSight` too.
-- In the working directory that you have on your computer, upload ALL the dependencies in a folder as requirements.txt.
-- Run the command lines to install the Pyinstaller library. Try to wrap up your current version of code with Pyinstaller as an .exe so that it COMPILES and RUNS.
+3. Synchronization: (A and J by 2.3.24)
+- Allen to provide Git tutorials by 1.29.24.
+- At each update, J:
+   - Make pull requests for your forked repository with mine. A will be making his requests based on `pauseForSight` too.
+   - In the working directory that you have on your computer, upload ALL the dependencies in a folder as requirements.txt.
 
-4. Final Compilation! (A and J)
-- *The due date is 2/3/2024.*
-- Pack the current version as an .exe. (J)
-- Make a new demo for the project once you have a running version. (J) Change the code to website of pauseForSight when the new demo is done. (A)
+4. Final Compilation! (A and J by 2.3.24)
+- Pack the current version as an .exe. (J by 1.28.24)
+- Make a new demo for the project once you have a running version. (J by 2.2.24) Change the code to website of pauseForSight when the new demo is done. (A by 2.3.24)
 
 5. *Additional Features:
 - A grid layout or a drop-down menu for GUI.
@@ -44,12 +39,18 @@
 - The statistics of the # of the real-time eye-tracking feature points.
 - A script that generalizes the libraries used in both macOS and Windows.
 - Run with VS Code or PyCharm to compare and to test the difference of compilation time. Colab prevents the GUI parts to load, and it is the full-size compilers that helps us.
-- A fine-tuning threshold of key strokes from both the keyboard and the mouse that tells the user if they needs a break. We have the default parameters set up, while we need additional efforts to let it broadcast to different kinds of tasks.
 - A script that connects your external hardware as a virtual camera to work on OpenCV. Since we need to display the project in Zoom, we need to leave the embedded camera for the main project while enabling video input for Zoom with the virtual camera.
 - A dynamic procedure that captures and adjusts the detection model's confidence (i.e. the user's confidence too as they calls the GUI) for eye-blinking. The further you are away from the screen, the less difference of the eyelids is needed for telling 1 blink, vice versa.
 - Aside from the current text-input box that changes the strictness, enhance the AI feature's controls on the user's end.
    - If the video stream is blocked too much by external items, the dynamic adjustment pauses the streaming, until the blocking items are removed.
    - We will have a time-lapse here, say like a 3-second threshold.
+- Fine-tuning modules of eye-blink tracing:
+   - Currently we are combining the CascadeClassifier in OpenCV (*?*) and the Face Mesh (`mediapipe.solutions.face_mesh`) to count the eye blinks.
+      - For the captions a bit away from the camera, the model can perform better.
+      - Why do you think we are experiencing that? How may we solve this with fine-tuning? Refer to the MediaPipe API.
+   - The one for tuning the threshold of key strokes.
+      - For both the keyboard and the mouse that tells the user if they needs a break, we add the ones respectively.
+      - We have the default parameters set up, while we need additional efforts to let it broadcast to different kinds of tasks.
 
 ## Pro-tips:
 - Merge with whatever Marisabel has shared with you and use my GitHub repo to synchronize the progress. Again, be aware of the naming of everything.
@@ -61,6 +62,8 @@
 
 ## Issues:
 - Jimmy's difference of the resolution on camera intake from that of Allen's. Vice Versa.
+
+---
 
 ## Curriculum
 
@@ -270,7 +273,7 @@ corresponding to the left eye. We then iterate through these indices and draw ci
 the frame. This will show only the landmarks of the left eye, effectively isolating it from the rest of the face
 landmarks.
 
-#### Show Right Eyes
+#### Show Right Eyes: SAME AS `Show Left Eyes` essentially but tune with difference feature points
 
 #### Eyes Blink Detector
 - process_image
@@ -403,4 +406,3 @@ listener.start()
 - https://docs.opencv.org/3.4/d6/d00/tutorial_py_root.html
 - https://github.com/google/mediapipe/wiki/MediaPipe-Face-Mesh
 - https://developers.google.com/mediapipe/solutions/vision/face_landmarker
-- ...
