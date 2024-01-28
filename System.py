@@ -8,6 +8,22 @@ from pynput.mouse import Listener as MouseListener
 from pynput.keyboard import Listener as KeyboardListener, Key
 from tkinter import ttk
 
+import mediapipe as mp
+
+mp_face_detection = mp.solutions.face_detection
+mp_drawing = mp.solutions.drawing_utils
+
+# 选择精确模型
+face_detection = mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5)
+
+# 选择快速模型
+# face_detection = mp_face_detection.FaceDetection(model_selection=0, min_detection_confidence=0.5)
+
+# 设置更高的检测置信度阈值
+face_detection = mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.7)
+
+# 设置更高的追踪置信度阈值（适用于其他MediaPipe模型如Face Mesh）
+face_mesh = mp.solutions.face_mesh.FaceMesh(min_tracking_confidence=0.7)
 
 class EyeTrackingApp:
     def __init__(self, window_title):
@@ -45,7 +61,6 @@ class EyeTrackingApp:
         # Right Section Frame
         right_frame = tk.Frame(main_frame, bg='#404040')
         right_frame.pack(side=tk.RIGHT, fill=tk.Y)
-
         self.canvas_video = tk.Canvas(video_frame, bg='#404040')
         self.canvas_video.pack(fill="both", expand=True)
 
@@ -146,6 +161,7 @@ class EyeTrackingApp:
         self.root.after(100, self.start_updates)
         self.handle_reset_countdown()
         self.root.mainloop()
+
     def set_input_strictness(self):
         value = self.input_strictness_textbox.get("1.0", "end").strip()
         try:
@@ -200,7 +216,6 @@ class EyeTrackingApp:
         mouse_listener.join()
         keyboard_listener.join()
 
-
     def start_eye_tracking(self):
         # Directly start tracking without checking the button state
         self.is_tracking = True
@@ -227,9 +242,6 @@ class EyeTrackingApp:
             else:
                 self.reset_counters()  # Call the method to reset the counters
                 self.handle_reset_countdown()  # Restart the countdown
-
-
-    
 
     def clear_video_feed(self):
         self.canvas_video.delete("all")
@@ -259,7 +271,6 @@ class EyeTrackingApp:
                     self.canvas_video.create_image((canvas_width - self.photo.width()) // 2, (canvas_height - self.photo.height()) // 2, image=self.photo, anchor=tk.NW)
         self.root.after(self.delay, self.update)
 
-
     def resize_with_aspect_ratio(self, image, width=None, height=None, inter=cv2.INTER_AREA):
         (h, w) = image.shape[:2]
 
@@ -282,7 +293,6 @@ class EyeTrackingApp:
             resized = cv2.resize(image, dim, interpolation=inter)
             return resized
         return None
-
 
     def detect_eyes(self, frame):
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -323,7 +333,6 @@ class EyeTrackingApp:
             self.update_keystroke_count()
             self.update_total_inputs_label()
 
-
     def update_click_count(self):
         self.total_clicks.config(text="Total Clicks: " + str(self.total_click_amount))
         self.update_total_inputs_label()
@@ -361,6 +370,13 @@ class EyeTrackingApp:
         self.reset_counters()
 
     def detect_eyes(self, frame):
+        # 获取摄像头的分辨率
+        frame_width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+        frame_height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+
+        # 获取摄像头的帧率
+        fps = cap.get(cv2.CAP_PROP_FPS)
+
         # Convert the frame to RGB for MediaPipe processing
         image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         results = self.face_mesh.process(image)
@@ -409,7 +425,6 @@ class EyeTrackingApp:
 
         return frame
 
-
     def calculate_ear(self, eye):
         # EAR calculation with six points
         P2_P6 = self.distance(eye[1], eye[5])
@@ -423,6 +438,5 @@ class EyeTrackingApp:
         x_diff = p2.x - p1.x
         y_diff = p2.y - p1.y
         return (x_diff**2 + y_diff**2)**0.5
-    
 
 app = EyeTrackingApp("MediaPipe Eye Tracking with Tkinter")
