@@ -84,8 +84,21 @@ class EyeTrackingApp:
         self.warning_msg.grid(row=2, columnspan=2)
 
         # Blink Count Frame
+        self.blink_verification_buffer_size = 5  # Number of frames to use for verification
+        self.blink_verification_buffer = []
+        self.frame_buffer_size = 10  # Size of the frame buffer
+        self.frame_buffer = []
+        self.blink_detection_buffer = []
+        self.blink_detected_frames = 0
         self.blink_count = 0
+        self.blink_frames_threshold = 3  # Increase the threshold for confirming a blink
+        self.blink_cooldown = 10  # Increase cooldown period
+        self.consecutive_frames_without_eyes = 0
+        self.cooldown_counter = 0
+
         self.EAR_THRESHOLD = 0.21
+        self.blink_confirmation_frames = 3  # Number of consecutive frames to confirm a blink
+        self.eye_closed_counter = 0  # Counter for consecutive frames where eyes are closed
         self.eye_closed = False
         self.blink_count_frame = tk.Frame(right_frame, bg='#404040')
         self.blink_count_frame.pack(side=tk.TOP, fill=tk.X)
@@ -352,62 +365,74 @@ class EyeTrackingApp:
 
     
     def extract_eye_region(self, frame, landmarks, indices):
-        # Get frame dimensions
         frame_height, frame_width = frame.shape[:2]
-
-        # Initialize minimum and maximum coordinates for the bounding box
         min_x, min_y = float('inf'), float('inf')
         max_x, max_y = -float('inf'), -float('inf')
 
-        # Iterate through indices and update the min and max coordinates
         for index in indices:
             landmark = landmarks.landmark[index]
-            x, y = landmark.x, landmark.y
+            x, y = int(landmark.x * frame_width), int(landmark.y * frame_height)
+            min_x, min_y, max_x, max_y = min(x, min_x), min(y, min_y), max(x, max_x), max(y, max_y)
 
-            # Convert normalized coordinates to pixel values based on the frame's size
-            x, y = int(x * frame_width), int(y * frame_height)
+        # Increase the expansion margin to create a larger area around the eyes
+        expansion_margin = 50  # Adjust this value as needed to make the rectangles bigger
+        min_x, min_y = max(0, min_x - expansion_margin), max(0, min_y - expansion_margin)
+        max_x, max_y = min(frame_width, max_x + expansion_margin), min(frame_height, max_y + expansion_margin)
 
-            # Update min and max coordinates
-            if x < min_x:
-                min_x = x
-            if x > max_x:
-                max_x = x
-            if y < min_y:
-                min_y = y
-            if y > max_y:
-                max_y = y
-
-        # Draw the rectangle on the frame
-        cv2.rectangle(frame, (min_x, min_y), (max_x, max_y), (255, 0, 0), 2)
-
-        # Return both the bounding box and the modified frame
         return frame, (min_x, min_y, max_x - min_x, max_y - min_y)
 
 
     
     def detect_blinks_with_haar(self, frame, eye_regions):
+        eyes_currently_detected = False
         for (x, y, w, h) in eye_regions:
-            # Extract the region of interest (ROI) for the eye
             eye_roi = frame[y:y+h, x:x+w]
             gray_eye_roi = cv2.cvtColor(eye_roi, cv2.COLOR_BGR2GRAY)
 
-            # Detect eyes within the ROI using Haar Cascade
-            eyes_detected = self.eye_cascade.detectMultiScale(gray_eye_roi, scaleFactor=1.1, minNeighbors=4, minSize=(30, 30))
+            # Adjust these parameters
+            scaleFactor = 1.1
+            minNeighbors = 5
+            minSize = (30, 30)
 
-            # Blink detection logic based on the eyes detected
-            if len(eyes_detected) == 0 and not self.eye_closed:
-                self.eye_closed = True
-            elif len(eyes_detected) > 0 and self.eye_closed:
-                self.eye_closed = False
+            eyes_detected = self.eye_cascade.detectMultiScale(
+                gray_eye_roi,
+                scaleFactor=scaleFactor,
+                minNeighbors=minNeighbors,
+                minSize=minSize
+            )
+
+            if len(eyes_detected) > 0:
+                eyes_currently_detected = True
+                for (ex, ey, ew, eh) in eyes_detected:
+                    cv2.rectangle(eye_roi, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
+
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+        # Update blink detection buffer
+        self.blink_detection_buffer.append(eyes_currently_detected)
+        if len(self.blink_detection_buffer) > self.blink_frames_threshold:
+            self.blink_detection_buffer.pop(0)
+
+        # Check for blink pattern
+        if self.is_blink_pattern():
+            if self.cooldown_counter == 0:
                 self.blink_count += 1
                 self.update_blink_count()
-
-            # Draw rectangles around detected eyes for visualization
-            for (ex, ey, ew, eh) in eyes_detected:
-                cv2.rectangle(frame, (x + ex, y + ey), (x + ex + ew, y + ey + eh), (0, 255, 0), 2)
+                self.cooldown_counter = self.blink_cooldown
+        if self.cooldown_counter > 0:
+            self.cooldown_counter -= 1
 
         return frame
 
+    def is_blink_pattern(self):
+        # Define a pattern that indicates a blink (e.g., eyes not detected for a few frames followed by detection)
+        # Adjust the pattern logic as needed based on testing
+        if len(self.blink_detection_buffer) != self.blink_frames_threshold:
+            return False
+
+        # Example pattern: [True, False, False, True, True] (blink detected in the middle frames)
+        blink_detected = not self.blink_detection_buffer[0] and all(self.blink_detection_buffer[1:-1]) and not self.blink_detection_buffer[-1]
+        return blink_detected
 
 
 
@@ -427,6 +452,14 @@ class EyeTrackingApp:
 
         # Reset all counts
         self.reset_counters()
+
+    def verify_blink(self):
+        # Verify if the pattern in the buffer corresponds to a blink
+        # Example: A true blink would have a sequence of False (eyes detected) followed by True (eyes not detected)
+        if len(self.blink_verification_buffer) < self.blink_verification_buffer_size:
+            return False
+        return all(self.blink_verification_buffer[-self.blink_verification_buffer_size:])
+
     
 
 app = EyeTrackingApp("MediaPipe Eye Tracking with Tkinter")
