@@ -1,5 +1,5 @@
-# Coding Minds Academy
-# CS Screen Usage AI Project (eyes_rest)
+9.17.2023 - 2.3.2024
+# Coding Minds Academy: CS Screen Usage AI Project (eyes_rest)
 
 **This is a mirror of the HS Project in CMA.**
 
