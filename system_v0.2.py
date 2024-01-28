@@ -86,12 +86,12 @@ class EyeTrackingApp:
         # Blink Count Frame
         self.blink_verification_buffer_size = 5  # Number of frames to use for verification
         self.blink_verification_buffer = []
-        self.frame_buffer_size = 10  # Size of the frame buffer
+        self.frame_buffer_size = 20  # Size of the frame buffer
         self.frame_buffer = []
         self.blink_detection_buffer = []
         self.blink_detected_frames = 0
         self.blink_count = 0
-        self.blink_frames_threshold = 3  # Increase the threshold for confirming a blink
+        self.blink_frames_threshold = 5  # Increase the threshold for confirming a blink
         self.blink_cooldown = 10  # Increase cooldown period
         self.consecutive_frames_without_eyes = 0
         self.cooldown_counter = 0
@@ -391,7 +391,7 @@ class EyeTrackingApp:
 
             # Adjust these parameters
             scaleFactor = 1.1
-            minNeighbors = 5
+            minNeighbors = 7  # previously 5
             minSize = (30, 30)
 
             eyes_detected = self.eye_cascade.detectMultiScale(
@@ -425,13 +425,12 @@ class EyeTrackingApp:
         return frame
 
     def is_blink_pattern(self):
-        # Define a pattern that indicates a blink (e.g., eyes not detected for a few frames followed by detection)
         # Adjust the pattern logic as needed based on testing
         if len(self.blink_detection_buffer) != self.blink_frames_threshold:
             return False
 
-        # Example pattern: [True, False, False, True, True] (blink detected in the middle frames)
-        blink_detected = not self.blink_detection_buffer[0] and all(self.blink_detection_buffer[1:-1]) and not self.blink_detection_buffer[-1]
+        # Example pattern: [True, False, False, False, True] (less strict)
+        blink_detected = not self.blink_detection_buffer[0] and all(not v for v in self.blink_detection_buffer[1:-1]) and not self.blink_detection_buffer[-1]
         return blink_detected
 
 
