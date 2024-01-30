@@ -2,6 +2,10 @@
 
 **This is a mirror of the HS Project in Coding Minds Academy.**
 
+## Meeting (1/30/2024)
+0. Instable Behavior of Listeners - Apply Multi-threading
+1.  
+
 ## Homework (2/2/2024):
 
 0. We would tackle them at the same time! Treat the project as one of your HW for the semester. A for Allen, and J for Jimmy.
