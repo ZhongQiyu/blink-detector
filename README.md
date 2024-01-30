@@ -1,7 +1,6 @@
 # CS Screen Usage AI Project (eyes_rest)
-# 9.17.2023 - 2.3.2024 (ALL TIME IN PST)
 
-**This is a mirror of the HS Project in Coding Minds Academy.**
+**This is a mirror of the HS Project in Coding Minds Academy between 9.17.2023 and 2.3.2024 (ALL TIME IN PST).**
 
 ## Meeting w/ Marisabel (1/30/2024)
 0. Instable Behavior of Listeners - Apply Multi-Threading
