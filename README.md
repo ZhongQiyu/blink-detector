@@ -18,9 +18,7 @@
 - At each update, use Git to make pull requests for your forked repository with mine. Refer to [`Git Hello World`](https://docs.github.com/en/get-started/quickstart/hello-world). A will be making his requests based on `pauseForSight` too.
 
 2. Implementation: (A and J by 2.1.24)
-- Add hardware support on MediaPipe and pynput with the virtual camera on Allen's machine. (A by 1.30.24)
-   - Allen is using `PyQt5` and `dlib` as alternatives for pynput and MediaPipe respectively, due to the hardware's limitation and difference of configurations in Jimmy's machine and that of Allen.
-   - But it would still be better to figure out mediapipe on macOS and the Windows VM. Embed MediaPipe on macOS and refer to the API of `CMake` and `Bazel` to install MediaPipe on the Windows VM.
+- Add hardware support on MediaPipe and pynput with the virtual camera on Allen's machine. Embed MediaPipe on macOS and refer to the API of `CMake` and `Bazel` to install MediaPipe on the Windows VM. (A by 1.30.24)
 - Change ALL the code to be able to process with multi-threading: (A and J by 1.31.24)
    - We now have the video stream input, the listener for the keyboard, and the one for the mouse/touch bar. However sometimes they do not really listen, and using a MINIMUM CAP for the threads available for machines may help.
    - Use `multiprocessing` in Python and `thread` in C++ to parallelize the computation done by the three components.
