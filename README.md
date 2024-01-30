@@ -1,4 +1,5 @@
-# CS Screen Usage AI Project (eyes_rest) 9.17.2023 - 2.3.2024 (ALL TIME IN PST)
+# CS Screen Usage AI Project (eyes_rest)
+# 9.17.2023 - 2.3.2024 (ALL TIME IN PST)
 
 **This is a mirror of the HS Project in Coding Minds Academy.**
 
@@ -15,7 +16,7 @@
 1. Synchronization: (J by 2.1.24)
 - Synchronize the Environment Variables on the Windows (VM) as a .txt or .json file to run the program.
 - In the working directory that you have on your computer, upload the dependencies of Python and C++ libraries in a folder as requirements.txt.
-- At each update, use Git to make pull requests for your forked repository with mine. A will be making his requests based on `pauseForSight` too.
+- At each update, use Git to make pull requests for your forked repository with mine. Refer to [`Git Hello World`](https://docs.github.com/en/get-started/quickstart/hello-world). A will be making his requests based on `pauseForSight` too.
 
 2. Implementation: (A and J by 2.1.24)
 - Add hardware support on MediaPipe and pynput with the virtual camera on Allen's machine. (A by 1.30.24)
