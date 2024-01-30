@@ -1,40 +1,46 @@
-# CS Screen Usage AI Project (eyes_rest) 9.17.2023 - 2.3.2024
+# CS Screen Usage AI Project (eyes_rest) 9.17.2023 - 2.3.2024 (ALL TIME IN PST)
 
 **This is a mirror of the HS Project in Coding Minds Academy.**
 
-## Meeting (1/30/2024)
-0. Instable Behavior of Listeners - Apply Multi-threading
-1.  
+## Meeting w/ Marisabel (1/30/2024)
+0. Instable Behavior of Listeners - Apply Multi-Threading
+1. OS Compatibility - Sync The Libraries and Dependencies
+2. Website Demo - Change `index.html` when the YouTube video is done; Replace `pauseForSight.zip` when ALL CODE IS DONE
+3. Duplicated Repos - Cite `hs_project` as a submodule in `pauseForSight`; keep `eyes_rest` original but provide feedback as tutorial changes
 
 ## Homework (2/2/2024):
 
 0. We would tackle them at the same time! Treat the project as one of your HW for the semester. A for Allen, and J for Jimmy.
 
-1. Implementation: (A by 1.29.24)
-- Add hardware support on mediapipe and pynput with the virtual camera on Allen's machine.
-   - Allen is using PyQt5 and Dlib as alternatives for pynput and MediaPipe respectively, due to the hardware's limitation and difference of configurations in Jimmy's machine and that of Allen.
-   - But it would still be better to figure out mediapipe on macOS and the Windows VM. Try to embed MediaPipe still on macOS, while pulling an alternative for pynput if needed. Refer to the API of CMake and Bazel to install MediaPipe on the Windows VM if the macOS one does not work. 
-- A better layout a.k.a arrangement of elements for the controlling GUI.
-   - Replace the warning messages with pop-up windows to show the moments of stopping the video input.
-   - Currently our placement of the display is about 70% on the left, while the GUI on the right can be a bit smaller. Save space for the video display and detection to be 75-80%. Try to truncate the warning messages and the contents of the buttons.
+1. Synchronization: (J by 2.1.24)
+- Synchronize the Environment Variables on the Windows (VM) as a .txt or .json file to run the program.
+- In the working directory that you have on your computer, upload the dependencies of Python and C++ libraries in a folder as requirements.txt.
+- At each update, use Git to make pull requests for your forked repository with mine. A will be making his requests based on `pauseForSight` too.
 
-2. Refactoring: (J by 2.2.24)
-- In our current working directory:
-   - Rename the variables and the functions that are too general.
-   - Merge System.py, cascade.py, ocr.py, and main.py. Which file can be deleted? Which files should go to which directory? Why?
-   - Refer to the repository done by Marisabel. Which files are the ones we inherited? Which are not? Can they be consolidated into one folder?
-- Apply the same logic of (1) and (2) on the folders. Do not change them into submodules. Warning: Before ANY kinds of deletion, what would we better do? Hint: Modularity sounds a good plan.
-- *A needs J's approval and synchronization of env vars.*
+2. Implementation: (A and J by 2.1.24)
+- Add hardware support on MediaPipe and pynput with the virtual camera on Allen's machine. (A by 1.30.24)
+   - Allen is using `PyQt5` and `dlib` as alternatives for pynput and MediaPipe respectively, due to the hardware's limitation and difference of configurations in Jimmy's machine and that of Allen.
+   - But it would still be better to figure out mediapipe on macOS and the Windows VM. Embed MediaPipe on macOS and refer to the API of `CMake` and `Bazel` to install MediaPipe on the Windows VM.
+- Change ALL the code to be able to process with multi-threading: (A and J by 1.31.24)
+   - We now have the video stream input, the listener for the keyboard, and the one for the mouse/touch bar. However sometimes they do not really listen, and using a MINIMUM CAP for the threads available for machines may help.
+   - Use `multiprocessing` in Python and `thread` in C++ to parallelize the computation done by the three components.
+      - For the video stream, the cap will be the same count of frames per second (FPS) that a single program run can support.
+      - For the listeners of the two hardware, we inherit the same idea but the counts in the real situation might differ.
+      - Chances likely, the counts for the latter two would be smaller. Support the other machines as much as we can.
+- A better layout a.k.a arrangement of elements for the controlling GUI: (J by 2.1.24)
+   - Replace the warning messages with pop-up windows to show the moments of stopping the video input. Currently our placement of the display is about 70% on the left, while the GUI on the right can be a bit smaller.
+   - Save space for the video display and detection to be 75-80%. Try to truncate the warning messages and the contents of the buttons.
 
-3. Synchronization: (A and J by 2.3.24)
-- Allen to provide Git tutorials by 1.29.24.
-- At each update, J:
-   - Make pull requests for your forked repository with mine. A will be making his requests based on `pauseForSight` too.
-   - In the working directory that you have on your computer, upload ALL the dependencies in a folder as requirements.txt.
+3. Refactoring: (A by 2.1.24)
+- Rename the variables and the functions that are too general.
+- Merge `System.py`, `cascade.py`, `ocr.py`, and `main.py`. Which file can be deleted? Which files should go to which directory? Why? (A DONE on 1.29.24)
+- Apply the same logic of (1) and (2) on the folders. Do not change them into submodules. Refer to the repository done by Marisabel.
+- Which files are the ones we inherited? Which are not? Can they be consolidated into one folder? Warning: Before ANY kinds of deletion, what would we better do? Modularity sounds a good plan.
 
-4. Final Compilation! (A and J by 2.3.24)
-- Pack the current version as an .exe. (J by 1.28.24)
-- Make a new demo for the project once you have a running version. (J by 2.2.24) Change the code to website of pauseForSight when the new demo is done. (A by 2.3.24)
+4. Final Compilation! (A and J by 2.2.24)
+- Make a new demo for the project once you have a running version. Upload your demo as a YouTube video and replace the YouTube link in the `pauseForSight` repo. (J by 2.1.24)
+- Cite the code for our repo (`hs_project`) as a submodule (refer to `Git Hello World`) in order to let the testers download and test our program. (A by 2.2.24)
+- Pack the current project as an .exe program and save as a dev version. (J DONE on 1.29.24)
 
 5. *Additional Features:
 - A grid layout or a drop-down menu for GUI.
@@ -57,12 +63,12 @@
       - We have the default parameters set up, while we need additional efforts to let it broadcast to different kinds of tasks.
 
 ## Pro-tips:
-- Merge with whatever Marisabel has shared with you and use my GitHub repo to synchronize the progress. Again, be aware of the naming of everything.
 - Do `git pull` then `git push ...` AS ALWAYS. This will eliminate at least 60% of the clashes.
 - When deletion of files happened, revert to the last-updated version. Save the directories often when you finish an iteration.
+- Merge with whatever Marisabel has shared with you and use my GitHub repo to synchronize the progress. Again, be aware of the naming of everything.
+- Cite the work from ChatGPT with notes when they bring a large help to your project (e.g. put up a module that works completely or fixed a stingy bug).
 - Use the GitHub feature in either PyCharm or VS Code to synchronize the progress. It is better than plain-text because of the auto-configuration of the .iml files, etc.
 - Tackle with Git when you iterate the versions. We are using the ```main``` branch, and if you want to have you own, feel free to create one. Send pull requests per your version update.
-- Work on 2 and 3 mostly. Cite the work from ChatGPT with notes when they bring a large help to your project (e.g. put up a module that works completely or fixed a stingy bug).
 
 ## Issues:
 - Jimmy's difference of the resolution on camera intake from that of Allen's. Vice Versa.
