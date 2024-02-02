@@ -468,3 +468,4 @@ class EyeTrackingApp:
     
 
 app = EyeTrackingApp("MediaPipe Eye Tracking with Tkinter")
+print(app)
