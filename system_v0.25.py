@@ -151,20 +151,24 @@ class EyeTrackingApp:
         self.reset_countdown_label = tk.Label(right_frame, text="Resets in 60 seconds", font=("Segoe UI", 20), fg='white', bg='#404040')
         self.reset_countdown_label.pack(side=tk.TOP, fill=tk.X)
 
-        # Input Listener Thread
-        input_listener_thread = threading.Thread(target=self.run_input_listeners)
-        input_listener_thread.daemon = True
-        input_listener_thread.start()
+        # Initialize input listeners in their own threads for keyboard and mouse
+        self.input_listener_thread = threading.Thread(target=self.run_input_listeners)
+        self.input_listener_thread.daemon = True  # Ensure the thread will close when the main program exits
+        self.input_listener_thread.start()
 
+        # Set initial tracking state and video source
         self.is_tracking = False
-        self.video_source = 0
-        self.vid = cv2.VideoCapture(self.video_source)
-        self.delay = 15
+        self.video_source = 0  # Assuming default webcam
+        self.vid = cv2.VideoCapture(self.video_source)  # Setup video capture
+        self.delay = 15  # Delay between frames in milliseconds (for video processing)
 
-        # Start video updates
-        self.root.after(100, self.start_updates)
-        self.handle_reset_countdown()
+        # Initialize the video processing in its own thread
+        self.video_thread = threading.Thread(target=self.start_updates)
+        self.video_thread.daemon = True  # Ensure the thread will close when the main program exits
+        self.video_thread.start()
+
         self.root.mainloop()
+
     def set_input_strictness(self):
         value = self.input_strictness_textbox.get("1.0", "end").strip()
         try:
@@ -198,14 +202,6 @@ class EyeTrackingApp:
         self.total_inputs_label.config(text=f"Total Inputs: {total_inputs}")
         if total_inputs >= self.input_strictness and not self.on_break:
             self.initiate_break()
-
-
-    def show_break_label(self):
-        self.break_label.pack()
-
-    def hide_break_label(self):
-        self.break_label.pack_forget()
-
     def run_input_listeners(self):
         # Initialize the mouse listener
         mouse_listener = MouseListener(on_click=self.on_click)
@@ -214,6 +210,12 @@ class EyeTrackingApp:
         # Initialize the keyboard listener
         keyboard_listener = KeyboardListener(on_press=self.on_press)
         keyboard_listener.start()
+
+    def show_break_label(self):
+        self.break_label.pack()
+
+    def hide_break_label(self):
+        self.break_label.pack_forget()
 
 
     def start_eye_tracking(self):
