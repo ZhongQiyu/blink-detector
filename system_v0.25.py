@@ -151,6 +151,24 @@ class EyeTrackingApp:
         self.reset_countdown_label = tk.Label(right_frame, text="Resets in 60 seconds", font=("Segoe UI", 20), fg='white', bg='#404040')
         self.reset_countdown_label.pack(side=tk.TOP, fill=tk.X)
 
+
+        # Grand counts initialization
+        self.grand_blink_count = 0
+        self.grand_input_count = 0
+
+        # Grand Blink Count Label
+        self.grand_blink_count_label = tk.Label(right_frame, text=f"Grand Blink Count: {self.grand_blink_count}", font=("Segoe UI", 20), fg='white', bg='#404040')
+        self.grand_blink_count_label.pack(side=tk.BOTTOM, fill=tk.X)
+
+        # Grand Input Count Label
+        self.grand_input_count_label = tk.Label(right_frame, text=f"Grand Input Count: {self.grand_input_count}", font=("Segoe UI", 20), fg='white', bg='#404040')
+        self.grand_input_count_label.pack(side=tk.BOTTOM, fill=tk.X)
+
+
+
+
+
+
         # Initialize input listeners in their own threads for keyboard and mouse
         self.input_listener_thread = threading.Thread(target=self.run_input_listeners)
         self.input_listener_thread.daemon = True  # Ensure the thread will close when the main program exits
@@ -326,12 +344,18 @@ class EyeTrackingApp:
             self.total_click_amount += 1
             self.update_click_count()
             self.update_total_inputs_label()
+            self.grand_input_count += 1  # Increment grand input count correctly
+            self.grand_input_count_label.config(text=f"Grand Input Count: {self.grand_input_count}")  # Update the label
+
+
+
 
     def on_press(self, key):
         self.total_keystroke_count += 1
         self.update_keystroke_count()
         self.update_total_inputs_label()
-
+        self.grand_input_count += 1  # Increment grand input count correctly
+        self.grand_input_count_label.config(text=f"Grand Input Count: {self.grand_input_count}")  # Update the label
 
     def update_click_count(self):
         self.total_clicks.config(text="Total Clicks: " + str(self.total_click_amount))
@@ -426,6 +450,7 @@ class EyeTrackingApp:
         if any(self.blink_detection_buffer):
             if self.cooldown_counter == 0:
                 self.blink_count += 1
+
                 self.update_blink_count()
                 # Reset the buffer after a blink is detected to avoid multiple detections for a single blink
                 self.blink_detection_buffer = [False] * self.blink_frames_threshold
@@ -454,9 +479,12 @@ class EyeTrackingApp:
     def update_blink_count(self):
         if not self.on_break:  # Only update blink count if not on a break
             self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
-
+            self.grand_blink_count += 1  # Correct place to increment grand blink count
+            self.grand_blink_count_label.config(text=f"Grand Blink Count: {self.grand_blink_count}")  # Update the label
+            
             if self.blink_count >= self.strictness:
                 self.initiate_break()
+
 
     def initiate_break(self):
         # Set the state to break and update the UI accordingly
