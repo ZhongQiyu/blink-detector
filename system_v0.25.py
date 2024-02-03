@@ -386,15 +386,16 @@ class EyeTrackingApp:
 
     
     def detect_blinks_with_haar(self, frame, eye_regions):
-        eyes_currently_detected = False
+        eyes_detected_in_frame = 0  # Reset count of eyes detected in the current frame
+
         for (x, y, w, h) in eye_regions:
             eye_roi = frame[y:y+h, x:x+w]
             gray_eye_roi = cv2.cvtColor(eye_roi, cv2.COLOR_BGR2GRAY)
 
-            # Parameters for Haar Cascade detection
+            # Adjust detection parameters for more sensitive eye detection
             scaleFactor = 1.1
-            minNeighbors = 7  # Adjusted from previous value
-            minSize = (30, 30)
+            minNeighbors = 5  # Lower value may help detect eyes more sensitively
+            minSize = (20, 20)  # Smaller size to detect smaller eye openings
 
             eyes_detected = self.eye_cascade.detectMultiScale(
                 gray_eye_roi,
@@ -403,31 +404,40 @@ class EyeTrackingApp:
                 minSize=minSize
             )
 
-            # If no eyes are detected in the region, it might indicate a blink
-            if len(eyes_detected) == 0:
-                eyes_currently_detected = False
-            else:
-                eyes_currently_detected = True
-                # Optional: Draw rectangles around detected eyes for visual feedback
+            # If eyes are detected, increment the counter
+            if len(eyes_detected) > 0:
+                eyes_detected_in_frame += 1
+                # Optionally draw rectangles around detected eyes
                 for (ex, ey, ew, eh) in eyes_detected:
                     cv2.rectangle(eye_roi, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-        # Update the blink detection buffer based on whether eyes were detected
-        self.blink_detection_buffer.append(not eyes_currently_detected)
+        # Update the blink detection logic to be less strict
+        # A blink is considered if no eyes are detected in the current frame
+        self.blink_detection_buffer.append(eyes_detected_in_frame == 0)
+
+        # Reduce the size of the blink detection buffer for quicker response
+        self.blink_frames_threshold = 3  # Reduce threshold for faster blink detection
+
         if len(self.blink_detection_buffer) > self.blink_frames_threshold:
             self.blink_detection_buffer.pop(0)
 
-        # Check for blink pattern based on the updated logic
-        if self.is_blink_pattern():
+        # Check for blink pattern with the updated, less strict logic
+        if any(self.blink_detection_buffer):
             if self.cooldown_counter == 0:
                 self.blink_count += 1
                 self.update_blink_count()
-                self.cooldown_counter = self.blink_cooldown
-        if self.cooldown_counter > 0:
-            self.cooldown_counter -= 1
+                # Reset the buffer after a blink is detected to avoid multiple detections for a single blink
+                self.blink_detection_buffer = [False] * self.blink_frames_threshold
+                # Set a very short cooldown to allow detecting rapid blinks
+                self.cooldown_counter = 2  # Very short cooldown
+        else:
+            if self.cooldown_counter > 0:
+                self.cooldown_counter -= 1
 
         return frame
+
+
 
     def is_blink_pattern(self):
         # Adjust the pattern logic based on testing
@@ -468,4 +478,3 @@ class EyeTrackingApp:
     
 
 app = EyeTrackingApp("MediaPipe Eye Tracking with Tkinter")
-print(app)
