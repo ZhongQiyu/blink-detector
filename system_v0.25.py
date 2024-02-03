@@ -21,6 +21,11 @@ class EyeTrackingApp:
         self.root.title(window_title)
         self.root.configure(bg='#404040')
 
+
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+
+
+
         self.on_break = False
 
         self.eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
@@ -151,6 +156,24 @@ class EyeTrackingApp:
         self.reset_countdown_label = tk.Label(right_frame, text="Resets in 60 seconds", font=("Segoe UI", 20), fg='white', bg='#404040')
         self.reset_countdown_label.pack(side=tk.TOP, fill=tk.X)
 
+
+        # Grand counts initialization
+        self.grand_blink_count = 0
+        self.grand_input_count = 0
+
+        # Grand Blink Count Label
+        self.grand_blink_count_label = tk.Label(right_frame, text=f"Grand Blink Count: {self.grand_blink_count}", font=("Segoe UI", 20), fg='white', bg='#404040')
+        self.grand_blink_count_label.pack(side=tk.BOTTOM, fill=tk.X)
+
+        # Grand Input Count Label
+        self.grand_input_count_label = tk.Label(right_frame, text=f"Grand Input Count: {self.grand_input_count}", font=("Segoe UI", 20), fg='white', bg='#404040')
+        self.grand_input_count_label.pack(side=tk.BOTTOM, fill=tk.X)
+
+
+
+
+
+
         # Initialize input listeners in their own threads for keyboard and mouse
         self.input_listener_thread = threading.Thread(target=self.run_input_listeners)
         self.input_listener_thread.daemon = True  # Ensure the thread will close when the main program exits
@@ -168,6 +191,61 @@ class EyeTrackingApp:
         self.video_thread.start()
 
         self.root.mainloop()
+
+    def on_close(self):
+        # Create a new top-level window
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Confirm Exit")
+        dialog.configure(bg='#404040')
+        dialog.geometry("300x100")  # Width x Height
+
+        # Center the dialog window
+        window_width = dialog.winfo_reqwidth()
+        window_height = dialog.winfo_reqheight()
+        position_right = int(dialog.winfo_screenwidth()/2 - window_width/2)
+        position_down = int(dialog.winfo_screenheight()/2 - window_height/2)
+        dialog.geometry("+{}+{}".format(position_right, position_down))
+
+        # Message
+        tk.Label(dialog, text="Are you sure you want to exit?", bg='#404040', fg='white').pack(pady=10)
+
+        # Yes and No buttons
+        yes_button = tk.Button(dialog, text="Yes", command=lambda: [self.root.withdraw(), dialog.destroy(), self.show_summary_dialog()], width=10)
+        yes_button.pack(side=tk.LEFT, padx=(50, 10), pady=10)
+        no_button = tk.Button(dialog, text="No", command=dialog.destroy, width=10)
+        no_button.pack(side=tk.RIGHT, padx=(10, 50), pady=10)
+
+        # Make the dialog modal
+        dialog.transient(self.root)  # Set to be on top of the main window
+        dialog.grab_set()  # Prevents any other window from interacting until this dialog is closed
+        self.root.wait_window(dialog)  # Wait for the dialog to be closed
+    def show_summary_dialog(self):
+        # Create a new root window for the summary
+        summary_root = tk.Tk()
+        summary_root.title("Session Summary")
+        summary_root.configure(bg='#404040')
+        summary_root.geometry("400x200")  # Adjust size as needed
+
+        # Center the window
+        window_width = summary_root.winfo_reqwidth()
+        window_height = summary_root.winfo_reqheight()
+        position_right = int(summary_root.winfo_screenwidth()/2 - window_width/2)
+        position_down = int(summary_root.winfo_screenheight()/2 - window_height/2)
+        summary_root.geometry("+{}+{}".format(position_right, position_down))
+
+        # Display summary information
+        tk.Label(summary_root, text=f"Total Time Elapsed: {divmod(self.total_time_count, 60)[0]} minutes, {divmod(self.total_time_count, 60)[1]} seconds", bg='#404040', fg='white').pack(pady=10)
+        tk.Label(summary_root, text=f"Grand Total Blinks: {self.grand_blink_count}", bg='#404040', fg='white').pack(pady=10)
+        tk.Label(summary_root, text=f"Grand Total Inputs: {self.grand_input_count}", bg='#404040', fg='white').pack(pady=10)
+
+        # Exit button
+        exit_button = tk.Button(summary_root, text="Exit", command=lambda: [summary_root.destroy(), self.root.destroy()], width=10)
+        exit_button.pack(pady=20)
+
+        summary_root.mainloop()
+
+
+
 
     def set_input_strictness(self):
         value = self.input_strictness_textbox.get("1.0", "end").strip()
@@ -326,12 +404,18 @@ class EyeTrackingApp:
             self.total_click_amount += 1
             self.update_click_count()
             self.update_total_inputs_label()
+            self.grand_input_count += 1  # Increment grand input count correctly
+            self.grand_input_count_label.config(text=f"Grand Input Count: {self.grand_input_count}")  # Update the label
+
+
+
 
     def on_press(self, key):
         self.total_keystroke_count += 1
         self.update_keystroke_count()
         self.update_total_inputs_label()
-
+        self.grand_input_count += 1  # Increment grand input count correctly
+        self.grand_input_count_label.config(text=f"Grand Input Count: {self.grand_input_count}")  # Update the label
 
     def update_click_count(self):
         self.total_clicks.config(text="Total Clicks: " + str(self.total_click_amount))
@@ -386,15 +470,16 @@ class EyeTrackingApp:
 
     
     def detect_blinks_with_haar(self, frame, eye_regions):
-        eyes_currently_detected = False
+        eyes_detected_in_frame = 0  # Reset count of eyes detected in the current frame
+
         for (x, y, w, h) in eye_regions:
             eye_roi = frame[y:y+h, x:x+w]
             gray_eye_roi = cv2.cvtColor(eye_roi, cv2.COLOR_BGR2GRAY)
 
-            # Parameters for Haar Cascade detection
+            # Adjust detection parameters for more sensitive eye detection
             scaleFactor = 1.1
-            minNeighbors = 7  # Adjusted from previous value
-            minSize = (30, 30)
+            minNeighbors = 5  # Lower value may help detect eyes more sensitively
+            minSize = (20, 20)  # Smaller size to detect smaller eye openings
 
             eyes_detected = self.eye_cascade.detectMultiScale(
                 gray_eye_roi,
@@ -403,31 +488,41 @@ class EyeTrackingApp:
                 minSize=minSize
             )
 
-            # If no eyes are detected in the region, it might indicate a blink
-            if len(eyes_detected) == 0:
-                eyes_currently_detected = False
-            else:
-                eyes_currently_detected = True
-                # Optional: Draw rectangles around detected eyes for visual feedback
+            # If eyes are detected, increment the counter
+            if len(eyes_detected) > 0:
+                eyes_detected_in_frame += 1
+                # Optionally draw rectangles around detected eyes
                 for (ex, ey, ew, eh) in eyes_detected:
                     cv2.rectangle(eye_roi, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-        # Update the blink detection buffer based on whether eyes were detected
-        self.blink_detection_buffer.append(not eyes_currently_detected)
+        # Update the blink detection logic to be less strict
+        # A blink is considered if no eyes are detected in the current frame
+        self.blink_detection_buffer.append(eyes_detected_in_frame == 0)
+
+        # Reduce the size of the blink detection buffer for quicker response
+        self.blink_frames_threshold = 3  # Reduce threshold for faster blink detection
+
         if len(self.blink_detection_buffer) > self.blink_frames_threshold:
             self.blink_detection_buffer.pop(0)
 
-        # Check for blink pattern based on the updated logic
-        if self.is_blink_pattern():
+        # Check for blink pattern with the updated, less strict logic
+        if any(self.blink_detection_buffer):
             if self.cooldown_counter == 0:
                 self.blink_count += 1
+
                 self.update_blink_count()
-                self.cooldown_counter = self.blink_cooldown
-        if self.cooldown_counter > 0:
-            self.cooldown_counter -= 1
+                # Reset the buffer after a blink is detected to avoid multiple detections for a single blink
+                self.blink_detection_buffer = [False] * self.blink_frames_threshold
+                # Set a very short cooldown to allow detecting rapid blinks
+                self.cooldown_counter = 2  # Very short cooldown
+        else:
+            if self.cooldown_counter > 0:
+                self.cooldown_counter -= 1
 
         return frame
+
+
 
     def is_blink_pattern(self):
         # Adjust the pattern logic based on testing
@@ -444,9 +539,12 @@ class EyeTrackingApp:
     def update_blink_count(self):
         if not self.on_break:  # Only update blink count if not on a break
             self.total_blink_count.config(text=f"Total Blink Count: {self.blink_count}")
-
+            self.grand_blink_count += 1  # Correct place to increment grand blink count
+            self.grand_blink_count_label.config(text=f"Grand Blink Count: {self.grand_blink_count}")  # Update the label
+            
             if self.blink_count >= self.strictness:
                 self.initiate_break()
+
 
     def initiate_break(self):
         # Set the state to break and update the UI accordingly
@@ -468,4 +566,3 @@ class EyeTrackingApp:
     
 
 app = EyeTrackingApp("MediaPipe Eye Tracking with Tkinter")
-print(app)

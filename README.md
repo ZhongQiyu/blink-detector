@@ -2,42 +2,38 @@
 
 **This is a mirror of the HS Project in Coding Minds Academy between 9.17.2023 and 2.3.2024 (ALL TIME IN PST).**
 
-## Meeting w/ Marisabel (1/30/2024)
-0. Instable Behavior of Listeners - Apply Multi-Threading
-1. OS Compatibility - Sync The Libraries and Dependencies
-2. Website Demo - Change `index.html` when the YouTube video is done; Replace `pauseForSight.zip` when ALL CODE IS DONE
-3. Duplicated Repos - Cite `hs_project` as a submodule in `pauseForSight`; keep `eyes_rest` original but provide feedback as tutorial changes
-
-## Homework (2/2/2024):
+## Homework (2/3/2024):
 
 0. We would tackle them at the same time! Treat the project as one of your HW for the semester. A for Allen, and J for Jimmy.
 
-1. Synchronization: (J by 2.1.24)
-- Synchronize the Environment Variables on the Windows (VM) as a .txt or .json file to run the program.
-- In the working directory that you have on your computer, upload the dependencies of Python and C++ libraries in a folder as requirements.txt.
+1. Synchronization: (J by 2.3.24)
+- Synchronize the Environment Variables on the Windows (VM) as a .txt or .json file to run the program. (J DONE on 2.1.24)
+- In the working directory that you have on your computer, upload the dependencies of Python and C++ libraries in a folder as requirements.txt. (J DONE on 2.1.24)
 - At each update, use Git to make pull requests for your forked repository with mine. Refer to [`Git Hello World`](https://docs.github.com/en/get-started/quickstart/hello-world). A will be making his requests based on `pauseForSight` too.
 
-2. Implementation: (A and J by 2.1.24)
-- Add hardware support on MediaPipe and pynput with the virtual camera on Allen's machine. Embed MediaPipe on macOS and refer to the API of `CMake` and `Bazel` to install MediaPipe on the Windows VM. (A by 1.30.24)
-- Change ALL the code to be able to process with multi-threading: (A and J by 1.31.24)
+2. Implementation: (A and J by 2.2.24)
+- Add hardware support on MediaPipe and pynput on Allen's machine. Embed MediaPipe on macOS and refer to the API of `CMake` and `Bazel` to install MediaPipe on the Windows VM. (A DONE on 2.1.24)
+- Add statistics to create a report at the end of the program run, showing the user's statistics of eye-blinking, keyboard-stroking, and mouse-clicking. (A and J by 2.2.24)
+   - When the user closes the program, we have a pop-up window ('Do you want to close the program?') to let the user choose that: (J DONE on 2.2.24)
+      - If 'No', then the program keeps running;
+      - Else 'Yes', then another pop-up window containing the three grand counts is at position.
+   - Flex the components if needed. (A by 2.2.24)
+- Change ALL the code to be able to process with multi-threading: (A and J DONE on 2.1.24)
    - We now have the video stream input, the listener for the keyboard, and the one for the mouse/touch bar. However sometimes they do not really listen, and using a MINIMUM CAP for the threads available for machines may help.
    - Use `multiprocessing` in Python and `thread` in C++ to parallelize the computation done by the three components.
       - For the video stream, the cap will be the same count of frames per second (FPS) that a single program run can support.
       - For the listeners of the two hardware, we inherit the same idea but the counts in the real situation might differ.
       - Chances likely, the counts for the latter two would be smaller. Support the other machines as much as we can.
-- A better layout a.k.a arrangement of elements for the controlling GUI: (J by 2.1.24)
-   - Replace the warning messages with pop-up windows to show the moments of stopping the video input. Currently our placement of the display is about 70% on the left, while the GUI on the right can be a bit smaller.
-   - Save space for the video display and detection to be 75-80%. Try to truncate the warning messages and the contents of the buttons.
+- Tune OBS Studio's settings of Virtual Camera to allow recording on Zoom and real-time display of code to be at the same time. (A and J by 2.2.24)
 
-3. Refactoring: (A by 2.1.24)
+3. Refactoring: (A by 2.2.24)
 - Rename the variables and the functions that are too general.
-- Merge `System.py`, `cascade.py`, `ocr.py`, and `main.py`. Which file can be deleted? Which files should go to which directory? Why? (A DONE on 1.29.24)
+- Merge files that have similar names, such as `System.py`, `cascade.py`, `ocr.py`, and `main.py`. (A DONE on 1.29.24)
 - Apply the same logic of (1) and (2) on the folders. Do not change them into submodules. Refer to the repository done by Marisabel.
-- Which files are the ones we inherited? Which are not? Can they be consolidated into one folder? Warning: Before ANY kinds of deletion, what would we better do? Modularity sounds a good plan.
 
-4. Final Compilation! (A and J by 2.2.24)
-- Make a new demo for the project once you have a running version. Upload your demo as a YouTube video and replace the YouTube link in the `pauseForSight` repo. (J by 2.1.24)
-- Cite the code for our repo (`hs_project`) as a submodule (refer to `Git Hello World`) in order to let the testers download and test our program. (A by 2.2.24)
+4. Final Compilation! (A and J by 2.3.24)
+- Make a new demo for the project once you have a running version. Upload your demo as a YouTube video and replace the YouTube link in the `pauseForSight` repo. (J by 2.2.24)
+- Cite the code for our repo (`hs_project`) as a submodule (refer to `Git Hello World`) in order to let the testers download and test our program. (A DONE on 1.31.24)
 - Pack the current project as an .exe program and save as a dev version. (J DONE on 1.29.24)
 
 5. *Additional Features:
@@ -52,6 +48,10 @@
 - Aside from the current text-input box that changes the strictness, enhance the AI feature's controls on the user's end.
    - If the video stream is blocked too much by external items, the dynamic adjustment pauses the streaming, until the blocking items are removed.
    - We will have a time-lapse here, say like a 3-second threshold.
+- A better layout a.k.a arrangement of elements for the controlling GUI: (J by 2.2.24)
+   - Currently our placement of the display is about 70% on the left, while the GUI on the right can be a bit smaller.
+   - Modify the volume ratio of display-GUI from 7:3 to 8:2 (80-20) or 3:1 (75-25), while allowing a bit more automatic spacing for the warning messages.
+   - Try to truncate the warning messages and the contents of the buttons. Replace the warning messages with pop-up windows to show the moments of stopping the video input. 
 - Fine-tuning modules of eye-blink tracing:
    - Currently we are combining the CascadeClassifier in OpenCV (*?*) and the Face Mesh (`mediapipe.solutions.face_mesh`) to count the eye blinks.
       - For the captions a bit away from the camera, the model can perform better.
@@ -67,9 +67,22 @@
 - Cite the work from ChatGPT with notes when they bring a large help to your project (e.g. put up a module that works completely or fixed a stingy bug).
 - Use the GitHub feature in either PyCharm or VS Code to synchronize the progress. It is better than plain-text because of the auto-configuration of the .iml files, etc.
 - Tackle with Git when you iterate the versions. We are using the ```main``` branch, and if you want to have you own, feel free to create one. Send pull requests per your version update.
+- Ask Yourself: Which files are the ones we inherited? Which are not? Can they be consolidated into one folder? Which file can be deleted? Which files should go to which directory, under which hierarchy? Why?
 
 ## Issues:
 - Jimmy's difference of the resolution on camera intake from that of Allen's. Vice Versa.
+
+## Meeting w/ Marisabel (1/30/2024)
+0. Instable Behavior of Listeners - Apply Multi-Threading
+1. OS Compatibility - Sync The Libraries and Dependencies
+2. Website Demo - Change `index.html` when the YouTube video is done; Replace `pauseForSight.zip` when ALL CODE IS DONE
+3. Duplicated Repos - Cite `hs_project` as a submodule in `pauseForSight`; keep `eyes_rest` original but provide feedback as tutorial changes
+
+## Meeting w/ Marisabel (11/15/2023)
+
+## Meeting w/ Marisabel (9/26/2023)
+
+## Meeting w/ Marisabel (9/16/2023)
 
 ---
 
@@ -414,3 +427,4 @@ listener.start()
 - https://docs.opencv.org/3.4/d6/d00/tutorial_py_root.html
 - https://github.com/google/mediapipe/wiki/MediaPipe-Face-Mesh
 - https://developers.google.com/mediapipe/solutions/vision/face_landmarker
+- 
