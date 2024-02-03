@@ -24,19 +24,18 @@
       - For the video stream, the cap will be the same count of frames per second (FPS) that a single program run can support.
       - For the listeners of the two hardware, we inherit the same idea but the counts in the real situation might differ.
       - Chances likely, the counts for the latter two would be smaller. Support the other machines as much as we can.
-- Tune OBS Studio's settings of Virtual Camera to allow recording on Zoom and real-time display of code to be at the same time. (A and J by 2.2.24)
+- Final Compilation! (A and J by 2.3.24)
+   - Pack the current project as an .exe program and save as a dev version. (J DONE on 1.29.24)
+   - Cite the code for our repo (`hs_project`) as a submodule (refer to `Git Hello World`) in order to let the testers download and test our program. (A DONE on 1.31.24)
+   - Tune OBS Studio's settings of Virtual Camera to allow recording on Zoom and real-time display of code to be at the same time. (A and J by 2.2.24)
+   - Make a new demo for the project once you have a running version. Upload your demo as a YouTube video and replace the YouTube link in the `pauseForSight` repo. (J by 2.3.24)
 
 3. Refactoring: (A by 2.2.24)
 - Rename the variables and the functions that are too general.
 - Merge files that have similar names, such as `System.py`, `cascade.py`, `ocr.py`, and `main.py`. (A DONE on 1.29.24)
 - Apply the same logic of (1) and (2) on the folders. Do not change them into submodules. Refer to the repository done by Marisabel.
 
-4. Final Compilation! (A and J by 2.3.24)
-- Make a new demo for the project once you have a running version. Upload your demo as a YouTube video and replace the YouTube link in the `pauseForSight` repo. (J by 2.2.24)
-- Cite the code for our repo (`hs_project`) as a submodule (refer to `Git Hello World`) in order to let the testers download and test our program. (A DONE on 1.31.24)
-- Pack the current project as an .exe program and save as a dev version. (J DONE on 1.29.24)
-
-5. *Additional Features:
+4. *Additional Features:
 - A grid layout or a drop-down menu for GUI.
 - The location of mouse clicks on the screen.
 - The real-time tracking of the most recent keyboard input.
