@@ -21,6 +21,11 @@ class EyeTrackingApp:
         self.root.title(window_title)
         self.root.configure(bg='#404040')
 
+
+        self.root.protocol("WM_DELETE_WINDOW", self.on_close)
+
+
+
         self.on_break = False
 
         self.eye_cascade = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
@@ -186,6 +191,61 @@ class EyeTrackingApp:
         self.video_thread.start()
 
         self.root.mainloop()
+
+    def on_close(self):
+        # Create a new top-level window
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Confirm Exit")
+        dialog.configure(bg='#404040')
+        dialog.geometry("300x100")  # Width x Height
+
+        # Center the dialog window
+        window_width = dialog.winfo_reqwidth()
+        window_height = dialog.winfo_reqheight()
+        position_right = int(dialog.winfo_screenwidth()/2 - window_width/2)
+        position_down = int(dialog.winfo_screenheight()/2 - window_height/2)
+        dialog.geometry("+{}+{}".format(position_right, position_down))
+
+        # Message
+        tk.Label(dialog, text="Are you sure you want to exit?", bg='#404040', fg='white').pack(pady=10)
+
+        # Yes and No buttons
+        yes_button = tk.Button(dialog, text="Yes", command=lambda: [self.root.withdraw(), dialog.destroy(), self.show_summary_dialog()], width=10)
+        yes_button.pack(side=tk.LEFT, padx=(50, 10), pady=10)
+        no_button = tk.Button(dialog, text="No", command=dialog.destroy, width=10)
+        no_button.pack(side=tk.RIGHT, padx=(10, 50), pady=10)
+
+        # Make the dialog modal
+        dialog.transient(self.root)  # Set to be on top of the main window
+        dialog.grab_set()  # Prevents any other window from interacting until this dialog is closed
+        self.root.wait_window(dialog)  # Wait for the dialog to be closed
+    def show_summary_dialog(self):
+        # Create a new root window for the summary
+        summary_root = tk.Tk()
+        summary_root.title("Session Summary")
+        summary_root.configure(bg='#404040')
+        summary_root.geometry("400x200")  # Adjust size as needed
+
+        # Center the window
+        window_width = summary_root.winfo_reqwidth()
+        window_height = summary_root.winfo_reqheight()
+        position_right = int(summary_root.winfo_screenwidth()/2 - window_width/2)
+        position_down = int(summary_root.winfo_screenheight()/2 - window_height/2)
+        summary_root.geometry("+{}+{}".format(position_right, position_down))
+
+        # Display summary information
+        tk.Label(summary_root, text=f"Total Time Elapsed: {divmod(self.total_time_count, 60)[0]} minutes, {divmod(self.total_time_count, 60)[1]} seconds", bg='#404040', fg='white').pack(pady=10)
+        tk.Label(summary_root, text=f"Grand Total Blinks: {self.grand_blink_count}", bg='#404040', fg='white').pack(pady=10)
+        tk.Label(summary_root, text=f"Grand Total Inputs: {self.grand_input_count}", bg='#404040', fg='white').pack(pady=10)
+
+        # Exit button
+        exit_button = tk.Button(summary_root, text="Exit", command=lambda: [summary_root.destroy(), self.root.destroy()], width=10)
+        exit_button.pack(pady=20)
+
+        summary_root.mainloop()
+
+
+
 
     def set_input_strictness(self):
         value = self.input_strictness_textbox.get("1.0", "end").strip()
