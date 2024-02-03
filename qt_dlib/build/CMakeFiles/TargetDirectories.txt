@@ -1,3 +1,0 @@
-/Users/qaz1214/Downloads/CMA/hs_project/qt/build/CMakeFiles/eye_tracking.dir
-/Users/qaz1214/Downloads/CMA/hs_project/qt/build/CMakeFiles/edit_cache.dir
-/Users/qaz1214/Downloads/CMA/hs_project/qt/build/CMakeFiles/rebuild_cache.dir

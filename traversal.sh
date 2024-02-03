@@ -22,4 +22,3 @@ for file in "$directory"/* "$directory"/.*; do
         echo "$(basename "$file")"
     fi
 done
-
